@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Left person head -->
+  <circle cx="112" cy="242" r="72" fill="#1A56DB"/>
+  <!-- Right person head -->
+  <circle cx="400" cy="242" r="72" fill="#1A56DB"/>
+  <!-- Center person head (larger, in front) -->
+  <circle cx="256" cy="172" r="94" fill="#1A56DB"/>
+  <!-- Shared shoulders/body at bottom -->
+  <path d="M 0 460 Q 0 360 112 318 Q 140 370 256 370 Q 372 370 400 318 Q 512 360 512 460 L 512 512 L 0 512 Z" fill="#1A56DB"/>
+</svg>

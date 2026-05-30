@@ -1,0 +1,8 @@
+name = "globalcubing"
+compatibility_date = "2024-01-01"
+pages_build_output_dir = "public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "globalcubing"
+database_id = "8a80f346-3d33-4210-aed9-59b693df59e9"  # fill in after: wrangler d1 create globalcubing

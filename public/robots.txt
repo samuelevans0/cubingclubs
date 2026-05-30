@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /signup
+
+Sitemap: https://cubingclubs.net/sitemap.xml

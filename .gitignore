@@ -1,0 +1,15 @@
+# Secrets — never commit
+.env
+.env.local
+.env.production
+.dev.vars
+
+# Wrangler local state (contains local SQLite DB)
+.wrangler/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

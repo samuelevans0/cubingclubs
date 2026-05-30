@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Club — CubingClubs.net</title>
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#1A56DB" />
+<link rel="icon" href="/logo.png" type="image/png" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #1A56DB; --brand-dark: #1240A8; --brand-light: #EBF1FD;
+    --bg: #F6F7F9; --surface: #FFFFFF; --border: #E4E7EC;
+    --text: #111827; --text-2: #4B5563; --text-3: #9CA3AF;
+    --success: #16A34A; --radius: 10px;
+  }
+  html, body { min-height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+  header {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem; height: 60px; display: flex; align-items: center; gap: 1rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+  .logo img { width: 30px; height: 30px; object-fit: contain; }
+  .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--text); }
+  .logo-text span { color: var(--brand); }
+  .back-link { margin-left: auto; font-size: 13px; color: var(--brand); text-decoration: none; font-weight: 500; }
+  .back-link:hover { text-decoration: underline; }
+
+  .page { max-width: 520px; margin: 0 auto; padding: 2.5rem 1.25rem 4rem; }
+
+  /* Profile hero */
+  .profile-hero { text-align: center; margin-bottom: 2rem; }
+  .profile-logo { width: 96px; height: 96px; border-radius: 20px; object-fit: cover;
+    border: 2px solid var(--border); margin: 0 auto 1rem; display: block; background: var(--brand-light); }
+  .profile-logo-placeholder {
+    width: 96px; height: 96px; border-radius: 20px; margin: 0 auto 1rem;
+    background: var(--brand-light); border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Grotesk', sans-serif; font-size: 38px; font-weight: 700; color: var(--brand);
+  }
+  .profile-name { font-family: 'Space Grotesk', sans-serif; font-size: 26px; font-weight: 700;
+    letter-spacing: -0.3px; margin-bottom: 6px; }
+  .profile-location { font-size: 14px; color: var(--text-3); display: flex; align-items: center;
+    gap: 4px; justify-content: center; }
+  .school-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600;
+    color: #6D28D9; background: #EDE9FE; border-radius: 100px; padding: 3px 10px; margin-top: 8px; }
+
+  /* Social icons */
+  .social-row { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin: 1.5rem 0; }
+  .social-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 52px; height: 52px; border-radius: 14px; background: var(--surface);
+    border: 1px solid var(--border); text-decoration: none; color: var(--text-2);
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .social-btn svg { width: 24px; height: 24px; }
+  .social-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .social-btn.website:hover { border-color: var(--brand); color: var(--brand); }
+  .social-btn.youtube:hover { border-color: #FF0000; color: #FF0000; }
+  .social-btn.instagram:hover { border-color: #E1306C; color: #E1306C; }
+  .social-btn.tiktok:hover { border-color: #010101; color: #010101; }
+  .social-btn.facebook:hover { border-color: #1877F2; color: #1877F2; }
+  .social-btn.community:hover { border-color: #5865F2; color: #5865F2; }
+  .social-btn.email:hover { border-color: #EA4335; color: #EA4335; }
+  .social-btn.phone:hover { border-color: var(--success); color: var(--success); }
+  /* Tooltip */
+  .social-btn::after {
+    content: attr(data-tip); position: absolute; bottom: calc(100% + 8px); left: 50%;
+    transform: translateX(-50%); background: #111; color: #fff; font-size: 12px;
+    padding: 5px 9px; border-radius: 6px; white-space: nowrap; pointer-events: none;
+    opacity: 0; transition: opacity 0.15s; font-family: 'DM Sans', sans-serif;
+  }
+  .social-btn:hover::after { opacity: 1; }
+
+  /* Description */
+  .description { font-size: 14px; color: var(--text-2); line-height: 1.65; text-align: center;
+    margin-bottom: 2rem; padding: 0 0.5rem; }
+
+  /* Divider */
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); margin-bottom: 0.875rem; }
+
+  /* Meeting cards */
+  .meeting-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1rem 1.25rem; margin-bottom: 0.625rem;
+    display: flex; gap: 1rem; align-items: flex-start;
+  }
+  .meeting-date-box {
+    background: var(--brand-light); border-radius: 8px; padding: 8px 12px;
+    text-align: center; flex-shrink: 0; min-width: 52px;
+  }
+  .meeting-month { font-size: 10px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meeting-day { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: var(--brand); line-height: 1; }
+  .meeting-info { flex: 1; }
+  .meeting-type-badge { display: inline-block; font-size: 11px; font-weight: 600; color: var(--brand);
+    background: var(--brand-light); border-radius: 100px; padding: 2px 8px; margin-bottom: 4px; }
+  .meeting-dow { font-weight: 600; font-size: 14px; color: var(--text); }
+  .meeting-meta { font-size: 12px; color: var(--text-3); margin-top: 3px; display: flex; flex-direction: column; gap: 2px; }
+  .meeting-countdown { font-size: 12px; font-weight: 600; color: var(--brand); margin-top: 4px; }
+  .meeting-countdown.today { color: #16A34A; }
+  .meeting-countdown.tomorrow { color: #D97706; }
+  .cal-wrap { position: relative; display: inline-block; margin-top: 8px; }
+  .add-to-cal-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; font-size: 12px; font-weight: 600;
+    color: var(--brand); background: var(--brand-light); border: 1px solid transparent;
+    border-radius: 6px; text-decoration: none; cursor: pointer; font-family: inherit;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .add-to-cal-btn:hover { background: var(--brand); color: #fff; }
+  .cal-dropdown {
+    display: none; position: absolute; bottom: calc(100% + 5px); left: 0;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.13); z-index: 50; min-width: 195px; overflow: hidden;
+  }
+  .cal-dropdown.open { display: block; }
+  .cal-dropdown-item {
+    display: flex; align-items: center; gap: 9px; width: 100%; padding: 9px 13px;
+    font-size: 13px; font-weight: 500; color: var(--text); background: none; border: none;
+    cursor: pointer; text-decoration: none; font-family: inherit; text-align: left;
+    transition: background 0.12s;
+  }
+  .cal-dropdown-item:hover { background: var(--bg); }
+  .cal-dropdown-item img { width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0; }
+  .cal-dropdown-divider { height: 1px; background: var(--border); margin: 2px 0; }
+
+  .empty-state { text-align: center; padding: 2rem; color: var(--text-3); font-size: 14px; }
+
+  /* Club photo */
+  .club-photo-section { margin-bottom: 2rem; }
+  .club-photo-thumb {
+    width: 100%; max-height: 260px; object-fit: cover; border-radius: 14px;
+    border: 1px solid var(--border); cursor: pointer; display: block;
+    transition: filter 0.2s, transform 0.2s;
+  }
+  .club-photo-thumb:hover { filter: brightness(0.88); transform: scale(1.01); }
+  .photo-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 1000;
+    display: flex; align-items: center; justify-content: center; padding: 1rem; }
+  .photo-lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain;
+    border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .photo-lightbox-close { position: absolute; top: 1rem; right: 1rem;
+    background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 22px;
+    width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+  .photo-lightbox-close:hover { background: rgba(255,255,255,0.28); }
+
+  footer { background: var(--surface); border-top: 1px solid var(--border); padding: 1.1rem 1.5rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  footer a { color: var(--brand); text-decoration: none; font-size: 12px; }
+  footer a:hover { text-decoration: underline; }
+  .footer-socials { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+  .footer-social-icon { color: var(--text-3); display: flex; align-items: center; transition: color 0.15s; text-decoration: none !important; }
+  .footer-social-icon.email:hover  { color: #EA4335; }
+  .footer-social-icon.tiktok:hover { color: #010101; }
+  .footer-social-icon.ig:hover     { color: #E1306C; }
+  .footer-social-icon.fb:hover     { color: #1877F2; }
+  .report-btn { background: transparent; color: var(--text-3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 11px; font-family: inherit; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .report-btn:hover { color: #DC2626; border-color: #DC2626; background: transparent; }
+
+  #loading { text-align: center; padding: 4rem 2rem; color: var(--text-3); font-size: 14px; }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="/">
+    <img src="/logo.png" alt="CubingClubs.net" />
+    <span class="logo-text">CubingClubs<span>.net</span></span>
+  </a>
+  <a class="back-link" href="/">← All Clubs</a>
+</header>
+
+<div id="loading">Loading club…</div>
+<div class="page" id="page" style="display:none;"></div>
+
+<footer>
+  <span style="font-size:12px;color:var(--text-3);">&copy; 2026 <a href="/">CubingClubs.net</a> &mdash; <a href="/privacy-policy" style="color:var(--brand);text-decoration:none;">Privacy Policy</a></span>
+  <div class="footer-socials">
+    <a href="mailto:cubingclubs@gmail.com" title="Email us" class="footer-social-icon email">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    </a>
+    <a href="https://tiktok.com/@cubingclubs" target="_blank" rel="noopener" title="TikTok" class="footer-social-icon tiktok">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.56V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+    </a>
+    <a href="https://instagram.com/cubingclubs" target="_blank" rel="noopener" title="Instagram" class="footer-social-icon ig">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+    <a href="https://facebook.com/cubingclubs" target="_blank" rel="noopener" title="Facebook" class="footer-social-icon fb">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    <div style="width:1px;height:16px;background:var(--border);"></div>
+    <button class="report-btn" onclick="document.getElementById('report-modal-club').style.display='flex'">Report an issue</button>
+  </div>
+</footer>
+
+<!-- Report modal -->
+<div id="report-modal-club" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1001;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--surface);border-radius:12px;max-width:420px;width:100%;padding:1.75rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;">
+    <button onclick="document.getElementById('report-modal-club').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;line-height:1;">✕</button>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:0.75rem;">Notice an issue?</div>
+    <p style="font-size:14px;color:var(--text-2);line-height:1.6;">Report it to us at <a href="mailto:cubingclubs@gmail.com" style="color:var(--brand);font-weight:600;">cubingclubs@gmail.com</a></p>
+  </div>
+</div>
+
+<!-- Photo lightbox -->
+<div class="photo-lightbox" id="club-lightbox" style="display:none;" onclick="if(event.target===this)closeLightbox()">
+  <button class="photo-lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="club-lightbox-img" src="" alt="Club photo" />
+</div>
+
+<script>
+const SVGS = {
+  pin: `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
+  globe: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`,
+  youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/></svg>`,
+  instagram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
+  tiktok: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.56V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>`,
+  facebook: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  community: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`,
+  email: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`,
+  phone: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>`
+};
+
+const SCHOOL_LABELS = { k12:'K-12', elementary:'Elementary School', middle:'Middle School', high:'High School', college:'College / University', public:'Public School' };
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ensureHttp(url) { return /^https?:\/\//.test(url) ? url : 'https://' + url; }
+
+function localDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function formatTime12(t) {
+  if (!t) return '';
+  const [h, m] = t.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+
+function relativeLabel(dateStr) {
+  const meet = localDate(dateStr);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((meet - today) / 86400000);
+  if (diff === 0) return 'today';
+  if (diff === 1) return 'tomorrow';
+  if (diff < 8) return `in ${diff} days`;
+  if (diff < 31) return `in ${Math.round(diff/7)} week${Math.round(diff/7) > 1 ? 's' : ''}`;
+  return '';
+}
+
+// ── Calendar helpers ──────────────────────────────────────────────────────────
+const _calMeetings = new Map(); // id → { m, clubName }
+
+function _calParts(m, clubName) {
+  const pad = n => String(n).padStart(2, '0');
+  const [y, mo, d] = m.date.split('-');
+  let compact0, compact1, iso0, iso1, allDay = false;
+  if (m.time) {
+    const [sh, sm] = m.time.split(':');
+    compact0 = `${y}${mo}${d}T${pad(sh)}${pad(sm)}00`;
+    iso0 = `${y}-${mo}-${d}T${pad(sh)}:${pad(sm)}:00`;
+    if (m.end_time) {
+      const [eh, em] = m.end_time.split(':');
+      compact1 = `${y}${mo}${d}T${pad(eh)}${pad(em)}00`;
+      iso1 = `${y}-${mo}-${d}T${pad(eh)}:${pad(em)}:00`;
+    } else {
+      const endH = (parseInt(sh, 10) + 2) % 24;
+      compact1 = `${y}${mo}${d}T${pad(endH)}${pad(sm)}00`;
+      iso1 = `${y}-${mo}-${d}T${pad(endH)}:${pad(sm)}:00`;
+    }
+  } else {
+    allDay = true;
+    compact0 = `${y}${mo}${d}`;
+    iso0 = `${y}-${mo}-${d}`;
+    const next = new Date(parseInt(y), parseInt(mo) - 1, parseInt(d) + 1);
+    compact1 = `${next.getFullYear()}${pad(next.getMonth()+1)}${pad(next.getDate())}`;
+    iso1 = `${next.getFullYear()}-${pad(next.getMonth()+1)}-${pad(next.getDate())}`;
+  }
+  const title = (m.meeting_type || 'Club Meeting') + (clubName ? ` — ${clubName}` : '');
+  const location = [m.location_name, m.address, m.address_line2, m.city, m.state, m.country].filter(Boolean).join(', ');
+  return { compact0, compact1, iso0, iso1, allDay, title, location, notes: m.notes || '' };
+}
+
+function _gCalUrl(m, clubName) {
+  const p = _calParts(m, clubName);
+  const params = new URLSearchParams({ action: 'TEMPLATE', text: p.title, dates: `${p.compact0}/${p.compact1}` });
+  if (p.location) params.set('location', p.location);
+  if (p.notes) params.set('details', p.notes);
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function _outlookUrl(m, clubName) {
+  const p = _calParts(m, clubName);
+  const params = new URLSearchParams({
+    rru: 'addevent', path: '/calendar/action/compose',
+    subject: p.title, startdt: p.iso0, enddt: p.iso1,
+  });
+  if (p.location) params.set('location', p.location);
+  if (p.notes) params.set('body', p.notes);
+  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
+}
+
+function _yahooUrl(m, clubName) {
+  const p = _calParts(m, clubName);
+  const params = new URLSearchParams({ v: '60', title: p.title, st: p.compact0, et: p.compact1 });
+  if (p.location) params.set('in_loc', p.location);
+  if (p.notes) params.set('desc', p.notes);
+  return `https://calendar.yahoo.com/?${params.toString()}`;
+}
+
+function _buildICS(m, clubName) {
+  const p = _calParts(m, clubName);
+  const uid = `${m.date}-${m.id || Math.random().toString(36).slice(2)}@cubingclubs.net`;
+  const lines = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//CubingClubs.net//EN',
+    'BEGIN:VEVENT',
+    `DTSTART${p.allDay ? ';VALUE=DATE' : ''}:${p.compact0}`,
+    `DTEND${p.allDay ? ';VALUE=DATE' : ''}:${p.compact1}`,
+    `SUMMARY:${p.title}`, `UID:${uid}`,
+  ];
+  if (p.location) lines.push(`LOCATION:${p.location}`);
+  if (p.notes) lines.push(`DESCRIPTION:${p.notes.replace(/\n/g, '\\n')}`);
+  lines.push('END:VEVENT', 'END:VCALENDAR');
+  return lines.join('\r\n');
+}
+
+function isMobile() {
+  return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+
+function toggleCalDropdown(id, e) {
+  e.stopPropagation();
+  const dd = document.getElementById(`cal-dd-${id}`);
+  const isOpen = dd.classList.contains('open');
+  document.querySelectorAll('.cal-dropdown.open').forEach(el => el.classList.remove('open'));
+  if (!isOpen) dd.classList.add('open');
+}
+
+function downloadICS(id) {
+  const entry = _calMeetings.get(id);
+  if (!entry) return;
+  const ics = _buildICS(entry.m, entry.clubName);
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'meeting.ics'; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  document.querySelectorAll('.cal-dropdown.open').forEach(el => el.classList.remove('open'));
+}
+
+function copyCalUrl(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = btn.innerHTML.replace('Copy calendar URL', 'Copied!');
+    setTimeout(() => { btn.innerHTML = orig; }, 2000);
+  });
+}
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.cal-dropdown.open').forEach(el => el.classList.remove('open'));
+});
+
+function meetingCard(m, clubName) {
+  const dt = localDate(m.date);
+  const month = MONTHS[dt.getMonth()];
+  const day = dt.getDate();
+  const dow = DAYS[dt.getDay()];
+  const timeStr = m.time ? formatTime12(m.time) : '';
+  const endStr = m.end_time ? ' – ' + formatTime12(m.end_time) : '';
+  const rel = relativeLabel(m.date);
+  const relClass = rel === 'today' ? 'today' : rel === 'tomorrow' ? 'tomorrow' : '';
+  const locationParts = [m.address, m.address_line2, m.city, m.state, m.country].filter(Boolean);
+  const locationStr = locationParts.join(', ');
+  const typeLabel = m.meeting_type || 'Club Meeting';
+  const id = m.id ?? (m.date + (m.time || ''));
+  _calMeetings.set(id, { m, clubName });
+
+  return `
+    <div class="meeting-card">
+      <div class="meeting-date-box">
+        <div class="meeting-month">${esc(month)}</div>
+        <div class="meeting-day">${day}</div>
+      </div>
+      <div class="meeting-info">
+        <span class="meeting-type-badge">${esc(typeLabel)}</span>
+        <div class="meeting-dow">${esc(dow)}, ${esc(month)} ${day}</div>
+        <div class="meeting-meta">
+          ${timeStr ? `<span>${esc(timeStr)}${esc(endStr)}</span>` : ''}
+          ${locationStr ? `<span>${esc(locationStr)}</span>` : ''}
+          ${m.notes ? `<span style="color:var(--text-2);font-style:italic;">${esc(m.notes)}</span>` : ''}
+        </div>
+        ${rel ? `<div class="meeting-countdown ${relClass}">${rel.charAt(0).toUpperCase() + rel.slice(1)}</div>` : ''}
+        <div class="cal-wrap">
+          <button class="add-to-cal-btn" onclick="isMobile() ? downloadICS(${JSON.stringify(id)}) : toggleCalDropdown(${JSON.stringify(id)}, event)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Add to Calendar
+          </button>
+          <div class="cal-dropdown" id="cal-dd-${esc(id)}">
+            <a class="cal-dropdown-item" href="${esc(_gCalUrl(m, clubName))}" target="_blank" rel="noopener">
+              <img src="https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png" alt=""> Google Calendar
+            </a>
+            <a class="cal-dropdown-item" href="${esc(_outlookUrl(m, clubName))}" target="_blank" rel="noopener">
+              <img src="https://res.cdn.office.net/assets/mail/pwa/v1/icons/icon-192.png" alt=""> Outlook
+            </a>
+            <a class="cal-dropdown-item" href="${esc(_yahooUrl(m, clubName))}" target="_blank" rel="noopener">
+              <img src="https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png" alt=""> Yahoo Calendar
+            </a>
+            <div class="cal-dropdown-divider"></div>
+            <button class="cal-dropdown-item" onclick="downloadICS(${JSON.stringify(id)})">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Other (download .ics)
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function render({ club, meetings }) {
+  document.title = `${club.name} — CubingClubs.net`;
+
+  const logoHtml = club.logo_url
+    ? `<img class="profile-logo" src="${esc(club.logo_url)}" alt="${esc(club.name)}" onerror="this.outerHTML='<div class=profile-logo-placeholder>${esc((club.name||'?')[0].toUpperCase())}</div>'" />`
+    : `<div class="profile-logo-placeholder">${esc((club.name||'?')[0].toUpperCase())}</div>`;
+
+  const loc = [club.city, club.state, club.country].filter(Boolean).join(', ');
+  const schoolLabel = SCHOOL_LABELS[club.school_type];
+
+  const socials = [];
+  if (club.website) socials.push(`<a class="social-btn website" href="${esc(ensureHttp(club.website))}" target="_blank" rel="noopener" data-tip="Website">${SVGS.globe}</a>`);
+  if (club.youtube) socials.push(`<a class="social-btn youtube" href="${esc(club.youtube)}" target="_blank" rel="noopener" data-tip="YouTube">${SVGS.youtube}</a>`);
+  if (club.instagram) socials.push(`<a class="social-btn instagram" href="${esc(club.instagram)}" target="_blank" rel="noopener" data-tip="Instagram">${SVGS.instagram}</a>`);
+  if (club.tiktok) socials.push(`<a class="social-btn tiktok" href="${esc(club.tiktok)}" target="_blank" rel="noopener" data-tip="TikTok">${SVGS.tiktok}</a>`);
+  if (club.facebook) socials.push(`<a class="social-btn facebook" href="${esc(club.facebook)}" target="_blank" rel="noopener" data-tip="Facebook">${SVGS.facebook}</a>`);
+  if (club.community_group) socials.push(`<a class="social-btn community" href="${esc(ensureHttp(club.community_group))}" target="_blank" rel="noopener" data-tip="Community Group">${SVGS.community}</a>`);
+  if (club.contact) socials.push(`<a class="social-btn email" href="mailto:${esc(club.contact)}" data-tip="${esc(club.contact)}">${SVGS.email}</a>`);
+  if (club.phone) socials.push(`<a class="social-btn phone" href="tel:${esc(club.phone)}" data-tip="${esc(club.phone)}">${SVGS.phone}</a>`);
+
+  const meetingsHtml = meetings.length
+    ? meetings.map(m => meetingCard(m, club.name)).join('')
+    : `<div class="empty-state">No upcoming meetings scheduled yet.</div>`;
+
+  document.getElementById('page').innerHTML = `
+    <div class="profile-hero">
+      ${logoHtml}
+      <h1 class="profile-name">${esc(club.name)}</h1>
+      ${club.meeting_place_name ? `<div class="profile-location" style="margin-bottom:3px;">${esc(club.meeting_place_name)}</div>` : ''}
+      ${loc ? `<div class="profile-location">${SVGS.pin} ${esc(loc)}</div>` : ''}
+      ${schoolLabel ? `<div><span class="school-badge">🎓 ${esc(schoolLabel)}</span></div>` : ''}
+    </div>
+
+    ${socials.length ? `<div class="social-row">${socials.join('')}</div>` : ''}
+
+    ${club.description ? `<p class="description">${esc(club.description)}</p>` : ''}
+
+    ${club.photo_url ? `<div class="club-photo-section"><img class="club-photo-thumb" src="${esc(club.photo_url)}" alt="Club photo" onclick="openLightbox(${JSON.stringify(club.photo_url).replace(/</g,'\\u003c')})" /></div>` : ''}
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:0.5rem;">
+      <div class="section-title" style="margin-bottom:0;">Upcoming Meetings</div>
+      ${meetings.length ? (() => {
+        const icsUrl    = club.calendar_url || ('https://cubingclubs.net/api/calendar/' + club.slug);
+        const webcalUrl = icsUrl.replace(/^https?:\/\//, 'webcal://');
+        const gcalCid   = encodeURIComponent(webcalUrl);
+        return `<div class="cal-wrap" style="margin-top:0;">
+        <button class="add-to-cal-btn" onclick="isMobile() ? window.location.href='${esc(webcalUrl)}' : toggleCalDropdown('subscribe', event)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Subscribe to Calendar
+        </button>
+        <div class="cal-dropdown" id="cal-dd-subscribe" style="bottom:auto;top:calc(100% + 5px);">
+          <a class="cal-dropdown-item" href="https://calendar.google.com/calendar/r?cid=${gcalCid}" target="_blank" rel="noopener">
+            <img src="https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png" alt=""> Google Calendar
+          </a>
+          <a class="cal-dropdown-item" href="${esc(webcalUrl)}" target="_blank" rel="noopener">
+            <img src="https://res.cdn.office.net/assets/mail/pwa/v1/icons/icon-192.png" alt=""> Outlook
+          </a>
+          <div class="cal-dropdown-divider"></div>
+          <button class="cal-dropdown-item" onclick="copyCalUrl('${esc(icsUrl)}', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Other (copy calendar URL)
+          </button>
+        </div>
+      </div>`;
+      })() : ''}
+    </div>
+    ${meetingsHtml}
+  `;
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('page').style.display = 'block';
+}
+
+function openLightbox(src) {
+  document.getElementById('club-lightbox-img').src = src;
+  document.getElementById('club-lightbox').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('club-lightbox').style.display = 'none';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+const slug = window.location.pathname.replace(/^\//, '').split('/')[0];
+fetch(`/api/club-page?slug=${encodeURIComponent(slug)}`)
+  .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+  .then(render)
+  .catch(() => {
+    document.getElementById('loading').innerHTML = '<h2 style="color:#9CA3AF">Club not found.</h2><p style="margin-top:8px"><a href="/" style="color:#1A56DB">← Browse all clubs</a></p>';
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,645 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CubingClubs.net — Find Speedcubing &amp; Rubik's Cube Clubs Near You</title>
+<meta name="description" content="Find speedcubing and Rubik's Cube clubs near you. Browse clubs worldwide, discover meeting times, and connect with your local cubing community." />
+<link rel="canonical" href="https://cubingclubs.net/" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="CubingClubs.net — Find Speedcubing &amp; Rubik's Cube Clubs Near You" />
+<meta property="og:description" content="Find speedcubing and Rubik's Cube clubs near you. Browse clubs worldwide, discover meeting times, and connect with your local cubing community." />
+<meta property="og:url" content="https://cubingclubs.net/" />
+<meta property="og:image" content="https://cubingclubs.net/logo.png" />
+<meta property="og:site_name" content="CubingClubs.net" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="CubingClubs.net — Find Speedcubing &amp; Rubik's Cube Clubs Near You" />
+<meta name="twitter:description" content="Find speedcubing and Rubik's Cube clubs near you. Browse clubs worldwide, discover meeting times, and connect with your local cubing community." />
+<meta name="twitter:image" content="https://cubingclubs.net/logo.png" />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "CubingClubs.net",
+  "url": "https://cubingclubs.net",
+  "description": "The global directory for speedcubing and Rubik's Cube clubs. Find clubs near you, discover meeting times, and connect with local cubers.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": { "@type": "EntryPoint", "urlTemplate": "https://cubingclubs.net/?q={search_term_string}" },
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#1A56DB" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="CubingClubs" />
+<link rel="icon" href="/logo.png" type="image/png" />
+<link rel="apple-touch-icon" href="/logo.png" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #1A56DB; --brand-dark: #1240A8; --brand-light: #EBF1FD;
+    --accent: #F97316; --bg: #F6F7F9; --surface: #FFFFFF;
+    --border: #E4E7EC; --text: #111827; --text-2: #4B5563; --text-3: #9CA3AF;
+    --radius: 10px; --header-h: 68px;
+  }
+  html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+  header {
+    position: sticky; top: 0; z-index: 1000; height: var(--header-h);
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 2rem; gap: 2rem;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-img { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
+  .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+  .logo-text span { color: var(--brand); }
+  nav { display: flex; align-items: center; gap: 0.25rem; margin-left: auto; }
+  nav a { font-size: 14px; font-weight: 500; color: var(--text-2); text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+  nav a:hover { background: var(--bg); color: var(--text); }
+  nav a.active { color: var(--brand); background: var(--brand-light); }
+  .nav-divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+  .header-cta { background: var(--brand); color: #fff !important; border-radius: 7px; padding: 7px 16px !important; font-weight: 600 !important; margin-left: 0.25rem; transition: background 0.15s !important; }
+  .header-cta:hover { background: var(--brand-dark) !important; }
+  .header-cta-outline { border: 1px solid var(--border); color: var(--text) !important; border-radius: 7px; padding: 6px 14px !important; font-weight: 500 !important; margin-left: 0.25rem; }
+  .header-cta-outline:hover { border-color: var(--brand); color: var(--brand) !important; background: var(--brand-light) !important; }
+
+  .hero { background: var(--surface); border-bottom: 1px solid var(--border); padding: 2rem 2rem 1.75rem; }
+  .hero-inner { max-width: 640px; }
+  .hero h1 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(22px, 3vw, 30px); font-weight: 700; line-height: 1.2; letter-spacing: -0.3px; color: var(--text); margin-bottom: 0.4rem; }
+  .hero p { font-size: 15px; color: var(--text-2); line-height: 1.6; max-width: 480px; }
+  .hero-stats { display: flex; align-items: baseline; gap: 1.5rem; margin-top: 1rem; }
+  .stat { display: flex; align-items: baseline; gap: 4px; }
+  .stat-num { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; color: var(--brand); }
+  .stat-label { font-size: 13px; color: var(--text-3); }
+
+  .search-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0.9rem 2rem; display: flex; align-items: center; gap: 1rem; }
+  .search-wrap { position: relative; flex: 1; max-width: 420px; }
+  .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-3); pointer-events: none; }
+  .search-wrap input { width: 100%; padding: 9px 12px 9px 38px; border: 1px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); background: var(--bg); outline: none; transition: border 0.15s, box-shadow 0.15s; }
+  .search-wrap input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(26,86,219,0.12); }
+  .search-wrap input::placeholder { color: var(--text-3); }
+  .result-count { margin-left: auto; font-size: 13px; color: var(--text-3); white-space: nowrap; }
+  .result-count strong { color: var(--text-2); }
+  .main { display: grid; grid-template-columns: 1fr 420px; height: calc(100vh - var(--header-h) - 68px - 55px); min-height: 520px; }
+  #map { width: 100%; height: 100%; z-index: 1; }
+
+  .club-list-panel { background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+  .panel-header { padding: 1.1rem 1.5rem 0.9rem; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .panel-header h2 { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); }
+  .panel-header p { font-size: 13px; color: var(--text-3); margin-top: 3px; }
+  .club-list { overflow-y: auto; flex: 1; padding: 0.5rem 0; }
+  .club-list::-webkit-scrollbar { width: 4px; }
+  .club-list::-webkit-scrollbar-track { background: transparent; }
+  .club-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .club-card { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.12s; position: relative; }
+  .club-card:last-child { border-bottom: none; }
+  .club-card:hover { background: var(--bg); }
+  .club-card.active { background: var(--brand-light); }
+  .club-card.active .club-name { color: var(--brand); }
+  .accent-dot { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: transparent; border-radius: 0 2px 2px 0; transition: background 0.12s; }
+  .club-card.active .accent-dot { background: var(--brand); }
+
+  .club-card-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+  .club-logo { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--bg); border: 1px solid var(--border); }
+  .club-logo-placeholder { width: 42px; height: 42px; border-radius: 8px; flex-shrink: 0; background: var(--brand-light); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; color: var(--brand); }
+  .club-info { flex: 1; display: flex; flex-direction: column; gap: 3px; padding-top: 1px; }
+  .club-name { font-weight: 600; font-size: 15px; color: var(--text); line-height: 1.3; transition: color 0.12s; }
+  .club-location { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 3px; }
+  .club-location svg { flex-shrink: 0; }
+  .club-next-meeting { font-size: 11px; color: var(--brand); display: flex; align-items: center; gap: 4px; margin-top: 3px; text-decoration: none; }
+  a.club-next-meeting:hover { text-decoration: underline; }
+  .club-more-info { display: inline-block; font-size: 12px; font-weight: 600; color: var(--brand); text-decoration: none; margin-top: 8px; }
+  .club-more-info:hover { text-decoration: underline; }
+
+  .school-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #6D28D9; background: #EDE9FE; border-radius: 100px; padding: 2px 8px; margin-top: 2px; width: fit-content; }
+
+  .club-contact-row { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
+  .club-contact-link { font-size: 12px; color: var(--text-2); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: color 0.12s; }
+  .club-contact-link:hover { color: var(--brand); }
+  .club-contact-link svg { flex-shrink: 0; color: var(--text-3); }
+
+  .social-icons { display: flex; gap: 6px; flex-wrap: wrap; }
+  .social-icon { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 6px; transition: opacity 0.15s; text-decoration: none; background: var(--bg); }
+  .social-icon:hover { opacity: 0.75; }
+  .social-icon svg { width: 17px; height: 17px; }
+  .social-icon.website { color: var(--text-3); }
+  .social-icon.youtube { color: #FF0000; }
+  .social-icon.instagram { color: #E1306C; }
+  .social-icon.tiktok { color: #010101; }
+  .social-icon.facebook { color: #1877F2; }
+  .social-icon.community { color: #5865F2; }
+
+  /* Popup */
+  .leaflet-popup-content-wrapper { border-radius: var(--radius) !important; box-shadow: 0 8px 30px rgba(0,0,0,0.14) !important; border: 1px solid var(--border); }
+  .leaflet-popup-content { margin: 0 !important; padding: 0 !important; }
+  .popup-card { padding: 14px 16px; font-family: 'DM Sans', sans-serif; min-width: 220px; }
+  .popup-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .popup-logo { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; flex-shrink: 0; background: var(--bg); border: 1px solid var(--border); }
+  .popup-logo-placeholder { width: 44px; height: 44px; border-radius: 8px; flex-shrink: 0; background: var(--brand-light); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--brand); }
+  .popup-name { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: var(--text); line-height: 1.3; }
+  .popup-loc { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 3px; margin-top: 2px; }
+  .popup-contact { margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px; }
+  .popup-contact a { font-size: 12px; color: var(--text-2); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+  .popup-contact a:hover { color: var(--brand); }
+  .popup-socials { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 8px; }
+  .popup-website { display: block; font-size: 12px; font-weight: 600; color: var(--brand); text-decoration: none; margin-top: 4px; }
+  .popup-website:hover { text-decoration: underline; }
+
+  footer { background: var(--surface); border-top: 1px solid var(--border); padding: 0.85rem 2rem; font-size: 13px; color: var(--text-3); display: flex; align-items: center; gap: 1rem; }
+  footer a { color: var(--brand); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  .footer-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+  .footer-social { color: var(--text-3); display: flex; align-items: center; transition: color 0.15s; }
+  .footer-social:hover { text-decoration: none !important; }
+  .footer-social.email:hover  { color: #EA4335; }
+  .footer-social.tiktok:hover { color: #010101; }
+  .footer-social.ig:hover     { color: #E1306C; }
+  .footer-social.fb:hover     { color: #1877F2; }
+  .footer-divider { width: 1px; height: 14px; background: var(--border); }
+  .footer-report { background: transparent; color: var(--text-3); border: 1px solid var(--border); border-radius: 6px; padding: 4px 11px; font-family: inherit; font-size: 12px; font-weight: 500; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+  .footer-report:hover { color: #DC2626; border-color: #DC2626; }
+
+  /* Mobile view toggle */
+  .view-toggle { display: none; gap: 3px; flex-shrink: 0; }
+  .toggle-btn { font-size: 13px; font-weight: 500; padding: 6px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text-2); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .toggle-btn.active { background: var(--brand); color: #fff; border-color: var(--brand); }
+
+  @media (max-width: 768px) {
+    header { padding: 0 1rem; gap: 0.75rem; }
+    nav a { font-size: 13px; padding: 5px 8px; }
+    .header-cta { padding: 6px 12px !important; font-size: 13px !important; margin-left: 0.1rem; }
+    .header-cta-outline { padding: 5px 10px !important; font-size: 13px !important; margin-left: 0.1rem; }
+    .nav-divider { margin: 0 2px; }
+
+    .hero { padding: 1.1rem 1rem; }
+    .hero h1 { font-size: clamp(18px, 5vw, 22px); }
+    .hero p { display: none; }
+    .hero-stats { margin-top: 0.5rem; gap: 1rem; }
+    .stat-num { font-size: 15px; }
+    .stat-label { font-size: 12px; }
+
+    .search-bar { padding: 0.65rem 1rem; gap: 0.5rem; }
+    .search-wrap { max-width: none; }
+    .result-count { display: none; }
+    .view-toggle { display: flex; }
+
+    .main { grid-template-columns: 1fr; height: 55svh; min-height: 360px; }
+    .main.list-view #map { display: none; }
+    .main.list-view .club-list-panel { height: 100%; border-left: none; border-top: 1px solid var(--border); }
+    .main.map-view #map { height: 100%; }
+    .main.map-view .club-list-panel { display: none; }
+
+    .club-card { padding: 0.875rem 1.25rem; }
+    .club-logo, .club-logo-placeholder { width: 36px; height: 36px; }
+
+    footer { padding: 0.65rem 1rem; font-size: 12px; }
+    .footer-right { display: none; }
+  }
+
+  @media (max-width: 400px) {
+    .logo-text { display: none; }
+  }
+  /* SKELETON */
+  @keyframes sk-shimmer{0%{background-position:-600px 0}100%{background-position:600px 0}}
+  .sk{background:linear-gradient(90deg,#E4E7EC 25%,#F6F7F9 50%,#E4E7EC 75%);background-size:1200px 100%;animation:sk-shimmer 1.4s linear infinite;border-radius:4px}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="/">
+    <img src="/logo.png" class="logo-img" alt="CubingClubs.net" />
+    <span class="logo-text">CubingClubs<span>.net</span></span>
+  </a>
+  <nav id="main-nav">
+    <a href="/" class="active">Clubs</a>
+    <div class="nav-divider"></div>
+    <a href="/dashboard" class="header-cta-outline">Log In</a>
+    <a href="/signup" class="header-cta">Sign Up</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <h1>Find a Cubing Club Near You</h1>
+    <p>Browse speedcubing clubs worldwide. Connect with local communities, attend meetings, and compete.</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" id="total-clubs"><span class="sk" style="display:inline-block;width:36px;height:.85em;vertical-align:middle;border-radius:3px;"></span></span><span class="stat-label">clubs listed</span></div>
+      <div class="stat" id="countries-stat"><span class="stat-num" id="total-countries"><span class="sk" style="display:inline-block;width:28px;height:.85em;vertical-align:middle;border-radius:3px;"></span></span><span class="stat-label">countries</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="search-bar">
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 15 15" fill="none"><path d="M10 6.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0zm-.669 3.417a4.5 4.5 0 1 1 .708-.707l2.876 2.875-.708.707-2.876-2.875z" fill="currentColor"/></svg>
+    <input type="text" id="search-input" placeholder="Search by city, country, or club name..." />
+  </div>
+  <div class="view-toggle">
+    <button class="toggle-btn active" id="toggle-map" onclick="setView('map')">Map</button>
+    <button class="toggle-btn" id="toggle-list" onclick="setView('list')">List</button>
+  </div>
+  <span class="result-count"><strong id="shown-count">—</strong> clubs shown</span>
+</div>
+
+<div class="main">
+  <div id="map"></div>
+  <aside class="club-list-panel">
+    <div class="panel-header">
+      <h2>Clubs Directory</h2>
+      <p>Click a club to highlight it on the map</p>
+    </div>
+    <div class="club-list" id="club-list">
+      <div class="club-card" aria-hidden="true" style="pointer-events:none"><div class="accent-dot"></div><div class="club-card-top"><div class="sk" style="width:42px;height:42px;border-radius:8px;flex-shrink:0;"></div><div class="club-info"><span class="sk" style="width:72%;height:15px;display:block;border-radius:3px;margin-bottom:6px;"></span><span class="sk" style="width:48%;height:12px;display:block;border-radius:3px;margin-bottom:4px;"></span><span class="sk" style="width:60%;height:11px;display:block;border-radius:3px;"></span></div></div></div>
+      <div class="club-card" aria-hidden="true" style="pointer-events:none"><div class="accent-dot"></div><div class="club-card-top"><div class="sk" style="width:42px;height:42px;border-radius:8px;flex-shrink:0;"></div><div class="club-info"><span class="sk" style="width:58%;height:15px;display:block;border-radius:3px;margin-bottom:6px;"></span><span class="sk" style="width:40%;height:12px;display:block;border-radius:3px;margin-bottom:4px;"></span><span class="sk" style="width:52%;height:11px;display:block;border-radius:3px;"></span></div></div></div>
+      <div class="club-card" aria-hidden="true" style="pointer-events:none"><div class="accent-dot"></div><div class="club-card-top"><div class="sk" style="width:42px;height:42px;border-radius:8px;flex-shrink:0;"></div><div class="club-info"><span class="sk" style="width:80%;height:15px;display:block;border-radius:3px;margin-bottom:6px;"></span><span class="sk" style="width:55%;height:12px;display:block;border-radius:3px;margin-bottom:4px;"></span><span class="sk" style="width:45%;height:11px;display:block;border-radius:3px;"></span></div></div></div>
+      <div class="club-card" aria-hidden="true" style="pointer-events:none"><div class="accent-dot"></div><div class="club-card-top"><div class="sk" style="width:42px;height:42px;border-radius:8px;flex-shrink:0;"></div><div class="club-info"><span class="sk" style="width:65%;height:15px;display:block;border-radius:3px;margin-bottom:6px;"></span><span class="sk" style="width:42%;height:12px;display:block;border-radius:3px;margin-bottom:4px;"></span><span class="sk" style="width:58%;height:11px;display:block;border-radius:3px;"></span></div></div></div>
+      <div class="club-card" aria-hidden="true" style="pointer-events:none"><div class="accent-dot"></div><div class="club-card-top"><div class="sk" style="width:42px;height:42px;border-radius:8px;flex-shrink:0;"></div><div class="club-info"><span class="sk" style="width:76%;height:15px;display:block;border-radius:3px;margin-bottom:6px;"></span><span class="sk" style="width:36%;height:12px;display:block;border-radius:3px;margin-bottom:4px;"></span><span class="sk" style="width:64%;height:11px;display:block;border-radius:3px;"></span></div></div></div>
+      <div class="club-card" aria-hidden="true" style="pointer-events:none"><div class="accent-dot"></div><div class="club-card-top"><div class="sk" style="width:42px;height:42px;border-radius:8px;flex-shrink:0;"></div><div class="club-info"><span class="sk" style="width:54%;height:15px;display:block;border-radius:3px;margin-bottom:6px;"></span><span class="sk" style="width:50%;height:12px;display:block;border-radius:3px;margin-bottom:4px;"></span><span class="sk" style="width:40%;height:11px;display:block;border-radius:3px;"></span></div></div></div>
+      <div class="club-card" aria-hidden="true" style="pointer-events:none"><div class="accent-dot"></div><div class="club-card-top"><div class="sk" style="width:42px;height:42px;border-radius:8px;flex-shrink:0;"></div><div class="club-info"><span class="sk" style="width:68%;height:15px;display:block;border-radius:3px;margin-bottom:6px;"></span><span class="sk" style="width:44%;height:12px;display:block;border-radius:3px;margin-bottom:4px;"></span><span class="sk" style="width:56%;height:11px;display:block;border-radius:3px;"></span></div></div></div>
+      <div class="club-card" aria-hidden="true" style="pointer-events:none"><div class="accent-dot"></div><div class="club-card-top"><div class="sk" style="width:42px;height:42px;border-radius:8px;flex-shrink:0;"></div><div class="club-info"><span class="sk" style="width:62%;height:15px;display:block;border-radius:3px;margin-bottom:6px;"></span><span class="sk" style="width:38%;height:12px;display:block;border-radius:3px;margin-bottom:4px;"></span><span class="sk" style="width:70%;height:11px;display:block;border-radius:3px;"></span></div></div></div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <span>&copy; 2026 CubingClubs.net &mdash; <a href="/privacy-policy">Privacy Policy</a></span>
+  <div class="footer-right">
+    <a href="mailto:cubingclubs@gmail.com" title="Email us" class="footer-social email">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    </a>
+    <a href="https://tiktok.com/@cubingclubs" target="_blank" rel="noopener" title="TikTok" class="footer-social tiktok">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.56V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+    </a>
+    <a href="https://instagram.com/cubingclubs" target="_blank" rel="noopener" title="Instagram" class="footer-social ig">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+    <a href="https://facebook.com/cubingclubs" target="_blank" rel="noopener" title="Facebook" class="footer-social fb">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    <div class="footer-divider"></div>
+    <button class="footer-report" onclick="document.getElementById('report-modal-index').style.display='flex'">Report an issue</button>
+  </div>
+</footer>
+
+<div id="report-modal-index" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--surface);border-radius:12px;max-width:420px;width:100%;padding:1.75rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;">
+    <button onclick="document.getElementById('report-modal-index').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;line-height:1;">✕</button>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:0.75rem;">Notice an issue?</div>
+    <p style="font-size:14px;color:var(--text-2);line-height:1.6;">Report it to us at <a href="mailto:cubingclubs@gmail.com" style="color:var(--brand);font-weight:600;">cubingclubs@gmail.com</a></p>
+  </div>
+</div>
+
+<script>
+const SVGS = {
+  pin: `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
+  globe: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`,
+  youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM10 15V9l5.2 3-5.2 3z"/></svg>`,
+  instagram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
+  tiktok: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.56V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>`,
+  facebook: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  community: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>`,
+  email: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>`,
+  phone: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>`
+};
+
+function socialIcons(club) {
+  const links = [];
+  if (club.website) links.push({ cls: "website", svg: SVGS.globe, href: ensureHttp(club.website), title: "Website" });
+  if (club.youtube) links.push({ cls: "youtube", svg: SVGS.youtube, href: club.youtube, title: "YouTube" });
+  if (club.instagram) links.push({ cls: "instagram", svg: SVGS.instagram, href: club.instagram, title: "Instagram" });
+  if (club.tiktok) links.push({ cls: "tiktok", svg: SVGS.tiktok, href: club.tiktok, title: "TikTok" });
+  if (club.facebook) links.push({ cls: "facebook", svg: SVGS.facebook, href: club.facebook, title: "Facebook" });
+  if (club.community_group) links.push({ cls: "community", svg: SVGS.community, href: ensureHttp(club.community_group), title: "Community" });
+  if (!links.length) return "";
+  return `<div class="social-icons">${links.map(l =>
+    `<a class="social-icon ${l.cls}" href="${esc(l.href)}" target="_blank" rel="noopener" title="${esc(l.title)}" onclick="event.stopPropagation()">${l.svg}</a>`
+  ).join("")}</div>`;
+}
+
+function ensureHttp(url) {
+  if (!url) return "#";
+  return /^https?:\/\//.test(url) ? url : "https://" + url;
+}
+
+function locationStr(club) {
+  const parts = [club.city, club.state, club.country].filter(Boolean);
+  return parts.join(", ");
+}
+
+function logoEl(club, size = 42) {
+  if (club.logo_url) {
+    return `<img class="club-logo" src="${esc(club.logo_url)}" alt="${esc(club.name)} logo" width="${size}" height="${size}" onerror="this.style.display='none'" />`;
+  }
+  const initial = (club.name || "?")[0].toUpperCase();
+  return `<div class="club-logo-placeholder" style="width:${size}px;height:${size}px;">${esc(initial)}</div>`;
+}
+
+function esc(str) {
+  return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+const SCHOOL_LABELS = { public:"Public School", k12:"K-12", elementary:"Elementary School", middle:"Middle School", high:"High School", college:"College / University" };
+function schoolBadge(club) {
+  if (!club.school_type) return "";
+  const label = SCHOOL_LABELS[club.school_type] || club.school_type;
+  return `<span class="school-badge">🎓 ${esc(label)}</span>`;
+}
+
+function popupHtml(club) {
+  const loc = locationStr(club);
+  const logoHtml = club.logo_url
+    ? `<img class="popup-logo" src="${esc(club.logo_url)}" alt="${esc(club.name)}" onerror="this.style.display='none'" />`
+    : `<div class="popup-logo-placeholder">${esc((club.name||"?")[0].toUpperCase())}</div>`;
+
+  const socials = [];
+  if (club.website) socials.push(`<a class="social-icon website" href="${esc(ensureHttp(club.website))}" target="_blank" rel="noopener" title="Website">${SVGS.globe}</a>`);
+  if (club.youtube) socials.push(`<a class="social-icon youtube" href="${esc(club.youtube)}" target="_blank" rel="noopener" title="YouTube">${SVGS.youtube}</a>`);
+  if (club.instagram) socials.push(`<a class="social-icon instagram" href="${esc(club.instagram)}" target="_blank" rel="noopener" title="Instagram">${SVGS.instagram}</a>`);
+  if (club.tiktok) socials.push(`<a class="social-icon tiktok" href="${esc(club.tiktok)}" target="_blank" rel="noopener" title="TikTok">${SVGS.tiktok}</a>`);
+  if (club.facebook) socials.push(`<a class="social-icon facebook" href="${esc(club.facebook)}" target="_blank" rel="noopener" title="Facebook">${SVGS.facebook}</a>`);
+  if (club.community_group) socials.push(`<a class="social-icon community" href="${esc(ensureHttp(club.community_group))}" target="_blank" rel="noopener" title="Community">${SVGS.community}</a>`);
+
+  const contactRows = [];
+  if (club.contact) contactRows.push(`<a href="mailto:${esc(club.contact)}" onclick="event.stopPropagation()">${SVGS.email.replace('viewBox','width="12" height="12" viewBox')} ${esc(club.contact)}</a>`);
+  if (club.phone) contactRows.push(`<a href="tel:${esc(club.phone)}" onclick="event.stopPropagation()">${SVGS.phone.replace('viewBox','width="12" height="12" viewBox')} ${esc(club.phone)}</a>`);
+
+  return `<div class="popup-card">
+    <div class="popup-top">
+      ${logoHtml}
+      <div>
+        <div class="popup-name">${esc(club.name)}</div>
+        ${club.meeting_place_name ? `<div class="popup-loc" style="color:var(--text-2);">${esc(club.meeting_place_name)}</div>` : ""}
+        ${loc ? `<div class="popup-loc">${SVGS.pin.replace('width="11" height="11"','width="11" height="11" style="flex-shrink:0"')} ${esc(loc)}</div>` : ""}
+        ${schoolBadge(club)}
+      </div>
+    </div>
+    ${contactRows.length ? `<div class="popup-contact">${contactRows.join("")}</div>` : ""}
+    ${socials.length ? `<div class="popup-socials">${socials.join("")}</div>` : ""}
+    ${nextMeetingLine(club)}
+    ${club.slug ? `<a class="popup-website" href="/${esc(club.slug)}">More information →</a>` : ""}
+  </div>`;
+}
+
+let _skipNextMapClick = false;
+
+const map = L.map('map', {
+  scrollWheelZoom: true,
+  zoomControl: true,
+  minZoom: 2,
+  worldCopyJump: false,
+  maxBounds: [[-85, -180], [85, 180]],
+  maxBoundsViscosity: 1.0
+}).setView([40, -100], 3);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd', maxZoom: 19, noWrap: true
+}).addTo(map);
+
+map.on('click', () => { if (_skipNextMapClick) { _skipNextMapClick = false; return; } clearActive(); });
+map.on('popupclose', () => { if (!_skipNextMapClick) clearActive(); });
+
+const makeIcon = (active) => L.divIcon({
+  html: `<svg xmlns="http://www.w3.org/2000/svg" width="${active?34:26}" height="${active?44:34}" viewBox="0 0 28 36">
+    <path d="M14 0C6.268 0 0 6.268 0 14c0 9.333 14 22 14 22S28 23.333 28 14C28 6.268 21.732 0 14 0z" fill="${active?'#F97316':'#1A56DB'}"/>
+    <circle cx="14" cy="14" r="6" fill="white"/>
+  </svg>`,
+  iconSize: active ? [34,44] : [26,34],
+  iconAnchor: active ? [17,44] : [13,34],
+  popupAnchor: [0, active ? -44 : -34],
+  className: ''
+});
+
+let clubs = [];
+const markers = {};
+let activeId = null;
+let searchTerm = "";
+let userLat = null, userLng = null;
+
+function haversine(lat1, lng1, lat2, lng2) {
+  const R = 6371, r = Math.PI / 180;
+  const dLat = (lat2 - lat1) * r, dLng = (lng2 - lng1) * r;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*r) * Math.cos(lat2*r) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function getSorted() {
+  const sorted = [...clubs];
+  if (userLat != null && userLng != null) {
+    const hasGeo = true;
+    sorted.sort((a, b) => {
+      const aHas = hasGeo && a.lat && a.lng;
+      const bHas = hasGeo && b.lat && b.lng;
+      if (!aHas && !bHas) return (a.name||'').localeCompare(b.name||'');
+      if (!aHas) return 1;
+      if (!bHas) return -1;
+      return haversine(userLat, userLng, a.lat, a.lng) - haversine(userLat, userLng, b.lat, b.lng);
+    });
+  } else {
+    sorted.sort((a, b) => (a.name||'').localeCompare(b.name||''));
+  }
+  return sorted;
+}
+
+function clearActive() {
+  if (activeId && markers[activeId]) markers[activeId].setIcon(makeIcon(false));
+  activeId = null;
+  document.querySelectorAll('.club-card').forEach(el => el.classList.remove('active'));
+}
+
+function setActive(id) {
+  if (activeId && markers[activeId]) markers[activeId].setIcon(makeIcon(false));
+  activeId = id;
+  if (markers[id]) { markers[id].setIcon(makeIcon(true)); markers[id].openPopup(); }
+  document.querySelectorAll('.club-card').forEach(el => el.classList.toggle('active', +el.dataset.id === id));
+  const el = document.querySelector(`.club-card[data-id="${id}"]`);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function getVisible() {
+  const sorted = getSorted();
+  if (!searchTerm) return sorted;
+  return sorted.filter(c => {
+    const q = searchTerm;
+    return (c.name || "").toLowerCase().includes(q)
+      || (c.city || "").toLowerCase().includes(q)
+      || (c.state || "").toLowerCase().includes(q)
+      || (c.country || "").toLowerCase().includes(q);
+  });
+}
+
+function fmt12(t) {
+  if (!t) return '';
+  const [hStr, mStr] = t.split(':');
+  let h = parseInt(hStr, 10);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return `${h}:${mStr || '00'} ${ampm}`;
+}
+
+function nextMeetingLine(club) {
+  if (!club.next_meeting_date) return '';
+  const [y, mo, d] = club.next_meeting_date.split('-').map(Number);
+  const date = new Date(y, mo - 1, d);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((date - today) / 86400000);
+  let label;
+  if (diff === 0) label = 'Today';
+  else if (diff === 1) label = 'Tomorrow';
+  else if (diff > 1 && diff < 7) label = `In ${diff} days`;
+  else label = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const type = club.next_meeting_type ? esc(club.next_meeting_type) : 'Next meeting';
+  const time = club.next_meeting_time ? ' · ' + fmt12(club.next_meeting_time) : '';
+  const inner = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>${type}: <strong>${label}</strong>${time}`;
+  return club.slug
+    ? `<a class="club-next-meeting" href="/${esc(club.slug)}" onclick="event.stopPropagation()">${inner}</a>`
+    : `<div class="club-next-meeting">${inner}</div>`;
+}
+
+function renderList() {
+  const visible = getVisible();
+  document.getElementById('shown-count').textContent = visible.length;
+  const list = document.getElementById('club-list');
+  list.innerHTML = "";
+
+  visible.forEach(club => {
+    const card = document.createElement('div');
+    card.className = 'club-card' + (club.id === activeId ? ' active' : '');
+    card.dataset.id = club.id;
+    const icons = socialIcons(club);
+    const loc = locationStr(club);
+    const hasContact = club.contact || club.phone;
+    card.innerHTML = `
+      <div class="accent-dot"></div>
+      <div class="club-card-top">
+        ${logoEl(club)}
+        <div class="club-info">
+          <div class="club-name">${esc(club.name)}</div>
+          ${club.meeting_place_name ? `<div class="club-location" style="color:var(--text-2);">${esc(club.meeting_place_name)}</div>` : ""}
+          ${loc ? `<div class="club-location">${SVGS.pin} ${esc(loc)}</div>` : ""}
+          ${schoolBadge(club)}
+          ${nextMeetingLine(club)}
+        </div>
+      </div>
+      ${hasContact ? `<div class="club-contact-row">
+        ${club.contact ? `<a class="club-contact-link" href="mailto:${esc(club.contact)}" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>${esc(club.contact)}</a>` : ""}
+        ${club.phone ? `<a class="club-contact-link" href="tel:${esc(club.phone)}" onclick="event.stopPropagation()"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>${esc(club.phone)}</a>` : ""}
+      </div>` : ""}
+      ${icons}
+      ${club.slug ? `<a class="club-more-info" href="/${esc(club.slug)}" onclick="event.stopPropagation()">More information →</a>` : ""}
+    `;
+    card.addEventListener('click', () => {
+      setActive(club.id);
+      if (club.lat && club.lng) map.setView([club.lat, club.lng], 12, { animate: true });
+    });
+    list.appendChild(card);
+  });
+
+  clubs.forEach(c => {
+    const m = markers[c.id];
+    if (!m) return;
+    const shown = visible.find(v => v.id === c.id);
+    if (shown) { if (!map.hasLayer(m)) m.addTo(map); }
+    else { if (map.hasLayer(m)) map.removeLayer(m); }
+  });
+}
+
+function loadClubs(data) {
+  Object.values(markers).forEach(m => map.removeLayer(m));
+  Object.keys(markers).forEach(k => delete markers[k]);
+  clubs = data;
+
+  data.forEach(club => {
+    if (!club.lat || !club.lng) return;
+    const marker = L.marker([club.lat, club.lng], { icon: makeIcon(false) }).addTo(map);
+    marker.bindPopup(popupHtml(club), { maxWidth: 280, closeButton: false });
+    marker.on('click', () => { _skipNextMapClick = true; setActive(club.id); });
+    markers[club.id] = marker;
+  });
+
+  const countries = new Set(data.map(c => c.country).filter(Boolean));
+  document.getElementById('total-clubs').textContent = data.length;
+  document.getElementById('total-countries').textContent = countries.size;
+  document.getElementById('countries-stat').style.display = countries.size <= 1 ? 'none' : '';
+  renderList();
+}
+
+document.getElementById('search-input').addEventListener('input', e => {
+  searchTerm = e.target.value.toLowerCase().trim();
+  renderList();
+});
+
+async function initNav() {
+  const nav = document.getElementById('main-nav');
+  try {
+    const res = await fetch('/api/auth/me', { credentials: 'include' });
+    if (res.ok) {
+      const { user } = await res.json();
+      if (user.is_admin) {
+        nav.innerHTML = `
+          <a href="/" class="active">Clubs</a>
+          <div class="nav-divider"></div>
+          <a href="/admin" class="header-cta-outline">Admin Dashboard</a>
+          <a href="#" class="header-cta" onclick="event.preventDefault();navLogout()">Log Out</a>`;
+      } else {
+        nav.innerHTML = `
+          <a href="/" class="active">Clubs</a>
+          <div class="nav-divider"></div>
+          <a href="/dashboard" class="header-cta-outline">My Club</a>
+          <a href="#" class="header-cta" onclick="event.preventDefault();navLogout()">Log Out</a>`;
+      }
+      return;
+    }
+  } catch (e) {}
+  nav.innerHTML = `
+    <a href="/" class="active">Clubs</a>
+    <div class="nav-divider"></div>
+    <a href="/dashboard" class="header-cta-outline">Log In</a>
+    <a href="/signup" class="header-cta">Sign Up</a>`;
+}
+
+async function navLogout() {
+  await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  location.reload();
+}
+
+function setView(view) {
+  const main = document.querySelector('.main');
+  main.classList.toggle('list-view', view === 'list');
+  main.classList.toggle('map-view', view === 'map');
+  document.getElementById('toggle-list').classList.toggle('active', view === 'list');
+  document.getElementById('toggle-map').classList.toggle('active', view === 'map');
+  if (view === 'map') setTimeout(() => map.invalidateSize(), 50);
+}
+
+if (window.matchMedia('(max-width: 768px)').matches) {
+  setTimeout(() => setView('map'), 0);
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+Promise.all([
+  fetch('/api/clubs').then(r => r.json()),
+  fetch('/api/geo').then(r => r.json()).catch(() => ({ lat: null, lng: null }))
+]).then(([clubsData, geo]) => {
+  if (geo && geo.lat != null && geo.lng != null) {
+    userLat = geo.lat;
+    userLng = geo.lng;
+  }
+  loadClubs(clubsData);
+}).catch(() => {
+  document.getElementById('club-list').innerHTML = '<div style="padding:2rem;text-align:center;color:#9CA3AF;font-size:13px;">Could not load clubs.</div>';
+});
+
+initNav();
+</script>
+</body>
+</html>

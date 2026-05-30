@@ -1,0 +1,1446 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — CubingClubs.net</title>
+<link rel="manifest" href="/manifest.json" />
+<meta name="theme-color" content="#1A56DB" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="CubingClubs.net" />
+<link rel="icon" href="/logo.png" type="image/png" />
+<link rel="apple-touch-icon" href="/logo.png" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #1A56DB; --brand-dark: #1240A8; --brand-light: #EBF1FD;
+    --bg: #F6F7F9; --surface: #FFFFFF; --border: #E4E7EC;
+    --text: #111827; --text-2: #4B5563; --text-3: #9CA3AF;
+    --success: #16A34A; --success-light: #DCFCE7;
+    --warn: #D97706; --warn-light: #FEF3C7;
+    --danger: #DC2626; --danger-light: #FEE2E2;
+    --radius: 10px; --header-h: 68px;
+  }
+  html, body { min-height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+  header {
+    height: var(--header-h); background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 0 2rem; gap: 2rem;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-img { width: 36px; height: 36px; object-fit: contain; flex-shrink: 0; }
+  .logo-text { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+  .logo-text span { color: var(--brand); }
+  .admin-badge { font-size: 11px; font-weight: 600; background: var(--brand-light); color: var(--brand); padding: 3px 8px; border-radius: 100px; letter-spacing: 0.04em; }
+  nav { display: flex; align-items: center; gap: 0.25rem; margin-left: auto; }
+  nav a { font-size: 14px; font-weight: 500; color: var(--text-2); text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+  nav a:hover { background: var(--bg); color: var(--text); }
+  nav a.active { color: var(--brand); background: var(--brand-light); }
+  .nav-divider { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+  .header-cta { background: var(--brand); color: #fff !important; border-radius: 7px; padding: 7px 16px !important; font-weight: 600 !important; margin-left: 0.25rem; transition: background 0.15s !important; cursor: pointer; }
+  .header-cta:hover { background: var(--brand-dark) !important; }
+  .header-cta-outline { border: 1px solid var(--border); color: var(--text) !important; border-radius: 7px; padding: 6px 14px !important; font-weight: 500 !important; margin-left: 0.25rem; }
+  .header-cta-outline:hover { border-color: var(--brand); color: var(--brand) !important; background: var(--brand-light) !important; }
+  .btn { display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 14px; font-weight: 500; padding: 7px 16px; border-radius: 8px; border: none; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+  .btn-ghost { background: transparent; color: var(--text-2); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--bg); color: var(--text); }
+  .btn-primary { background: var(--brand); color: #fff; }
+  .btn-primary:hover { background: var(--brand-dark); }
+  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-success { background: var(--success); color: #fff; font-size: 13px; padding: 5px 12px; }
+  .btn-success:hover { background: #15803d; }
+  .btn-danger { background: var(--danger); color: #fff; font-size: 13px; padding: 5px 12px; }
+  .btn-danger:hover { background: #b91c1c; }
+  .btn-warn { background: var(--warn); color: #fff; font-size: 13px; padding: 5px 12px; }
+  .btn-warn:hover { background: #b45309; }
+  .btn-sm { font-size: 12px; padding: 4px 10px; }
+
+  /* Login */
+  #login-screen { max-width: 380px; margin: 6rem auto; padding: 0 1rem; }
+  .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; }
+  .login-title { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .login-sub { font-size: 13px; color: var(--text-3); margin-bottom: 1.5rem; }
+  .login-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
+  .login-error { font-size: 13px; color: var(--danger); margin-bottom: 0.75rem; display: none; }
+  .login-error.visible { display: block; }
+  label { font-size: 13px; font-weight: 500; color: var(--text-2); }
+  input, textarea, select {
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    padding: 8px 11px; border: 1px solid var(--border);
+    border-radius: 8px; background: var(--bg); color: var(--text);
+    outline: none; transition: border 0.15s, box-shadow 0.15s; width: 100%;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--brand); box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+  }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* Admin layout */
+  #admin-panel { display: none; }
+  .admin-wrap { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  .page-header { margin-bottom: 1.75rem; }
+  .page-title { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 2px; }
+  .page-sub { font-size: 14px; color: var(--text-3); }
+
+  /* Stat cards */
+  .stats-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2rem; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem 1.5rem; }
+  .stat-val { font-family: 'Space Grotesk', sans-serif; font-size: 28px; font-weight: 700; color: var(--text); }
+  .stat-label { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tab-btn {
+    font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+    padding: 9px 16px; border: none; background: transparent;
+    color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent;
+    margin-bottom: -1px; transition: all 0.15s; display: flex; align-items: center; gap: 6px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--brand); border-bottom-color: var(--brand); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .badge {
+    font-size: 11px; font-weight: 600; background: var(--warn-light); color: var(--warn);
+    padding: 2px 7px; border-radius: 100px; min-width: 20px; text-align: center;
+  }
+  .badge.zero { background: var(--bg); color: var(--text-3); }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; }
+  .card-title { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1.25rem; }
+
+  /* Club rows */
+  .club-row {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem 1.25rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 0.625rem;
+  }
+  .club-row-info { flex: 1; min-width: 0; }
+  .club-row-name { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .club-row-meta { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+  .club-row-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  .status-pill {
+    font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .status-pill.approved { background: var(--success-light); color: var(--success); }
+  .status-pill.pending { background: var(--warn-light); color: var(--warn); }
+  .status-pill.hidden { background: var(--bg); color: var(--text-3); border: 1px solid var(--border); }
+
+  /* User rows */
+  .user-row {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.875rem 1.25rem; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    margin-bottom: 0.5rem;
+  }
+  .user-avatar {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--brand-light); color: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px; flex-shrink: 0;
+  }
+  .user-info { flex: 1; min-width: 0; }
+  .user-email { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .user-meta { font-size: 12px; color: var(--text-3); margin-top: 1px; }
+  .admin-tag { font-size: 11px; font-weight: 600; background: var(--brand-light); color: var(--brand); padding: 2px 7px; border-radius: 100px; }
+
+  /* Field grid */
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field.full { grid-column: 1 / -1; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; margin-bottom: 0.875rem; }
+  .form-row.triple { grid-template-columns: 1fr 1fr 1fr; }
+  .form-row.single { grid-template-columns: 1fr; }
+
+  /* Create user form */
+  .create-user-grid { display: grid; grid-template-columns: 1fr 1fr auto; gap: 0.75rem; align-items: end; }
+  .create-user-grid .field { margin: 0; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 200; padding: 1rem;
+  }
+  .modal {
+    background: var(--surface); border-radius: 12px; width: 100%;
+    max-width: 640px; max-height: 90vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; background: var(--surface); z-index: 1;
+  }
+  .modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; }
+  .modal-close { background: none; border: none; cursor: pointer; color: var(--text-3); font-size: 20px; line-height: 1; padding: 2px; }
+  .modal-close:hover { color: var(--text); }
+  .modal-body { padding: 1.5rem; }
+  .addr-wrap { position: relative; }
+  .addr-suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.1); z-index: 300; display: none; overflow: hidden; }
+  .addr-suggestion { padding: 9px 12px; cursor: pointer; border-bottom: 1px solid var(--border); }
+  .addr-suggestion:last-child { border-bottom: none; }
+  .addr-suggestion:hover, .addr-suggestion.focused { background: var(--brand-light); }
+  .addr-suggestion-main { font-size: 13px; color: var(--text); font-weight: 500; }
+  .addr-suggestion-sub { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+  .modal-footer {
+    padding: 1rem 1.5rem; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .modal-msg { font-size: 13px; color: var(--success); }
+  .modal-err { font-size: 13px; color: var(--danger); }
+
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: 13px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.06em; margin: 1.25rem 0 0.75rem; }
+  .section-title:first-child { margin-top: 0; }
+
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-3); font-size: 14px; }
+
+  /* Push notification bell button */
+  .nav-bell { background: none; border: 1px solid var(--border); border-radius: 7px; padding: 6px 9px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; color: var(--text-2); transition: all 0.15s; margin-left: 0.25rem; flex-shrink: 0; }
+  .nav-bell:hover { background: var(--bg); color: var(--text); border-color: var(--text-3); }
+  .nav-bell.subscribed { color: var(--brand); border-color: var(--brand); background: var(--brand-light); }
+
+  @media (max-width: 640px) {
+    header { padding: 0 1rem; gap: 0.5rem; }
+    nav a { font-size: 13px; padding: 5px 8px; }
+    .header-cta { padding: 6px 10px !important; font-size: 13px !important; margin-left: 0.1rem; }
+    .header-cta-outline { padding: 5px 8px !important; font-size: 13px !important; margin-left: 0.1rem; }
+    .nav-divider { margin: 0 1px; }
+    .admin-badge { display: none; }
+    .admin-wrap { padding: 1.25rem 1rem; }
+    .page-title { font-size: 20px; }
+    .stats-row { grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    .stat-card { padding: 1rem; }
+    .stat-val { font-size: 22px; }
+    .field-grid, .form-row, .create-user-grid { grid-template-columns: 1fr; }
+    .form-row.triple { grid-template-columns: 1fr; }
+    .club-row { flex-wrap: wrap; gap: 0.5rem; }
+    .club-row-actions { width: 100%; flex-wrap: wrap; }
+    .modal-overlay { align-items: flex-end; padding: 0; }
+    .modal { border-radius: 16px 16px 0 0; max-width: 100%; max-height: 85vh; }
+    .tabs { overflow-x: auto; }
+    .tab-btn { white-space: nowrap; font-size: 13px; padding: 8px 12px; }
+  }
+  @media (max-width: 400px) {
+    .logo-text { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="/">
+    <img src="/logo.png" class="logo-img" alt="CubingClubs.net" />
+    <span class="logo-text">CubingClubs<span>.net</span></span>
+  </a>
+  <span class="admin-badge">ADMIN</span>
+  <nav id="main-nav">
+    <a href="/">Clubs</a>
+    <div class="nav-divider"></div>
+    <a href="/admin" class="active header-cta-outline">Admin Dashboard</a>
+  </nav>
+</header>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen" style="display:none;">
+  <div class="login-card">
+    <div class="login-title">Admin Login</div>
+    <div class="login-sub">Sign in with your admin account.</div>
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="admin@example.com" autocomplete="email" />
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <button class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;" onclick="doLogin()">Log In</button>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-panel">
+  <div class="admin-wrap">
+    <div class="page-header">
+      <div class="page-title">Admin Dashboard</div>
+      <div class="page-sub">Manage clubs, approve requests, and create accounts.</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-val" id="stat-total">—</div><div class="stat-label">Total clubs</div></div>
+      <div class="stat-card"><div class="stat-val" id="stat-pending">—</div><div class="stat-label">Pending approval</div></div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('requests')" id="tab-btn-requests">
+        Requests <span class="badge" id="pending-badge">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('clubs')" id="tab-btn-clubs">All Clubs</button>
+      <button class="tab-btn" onclick="switchTab('users')" id="tab-btn-users">Users</button>
+      <button class="tab-btn" onclick="switchTab('account')" id="tab-btn-account">My Account</button>
+      <button class="tab-btn" onclick="switchTab('settings')" id="tab-btn-settings">Settings</button>
+    </div>
+
+    <!-- REQUESTS TAB -->
+    <div class="tab-content active" id="tab-requests">
+      <div id="requests-list"></div>
+    </div>
+
+    <!-- ALL CLUBS TAB -->
+    <div class="tab-content" id="tab-clubs">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+        <button class="btn btn-primary" onclick="openCreateClub()">+ New Club</button>
+      </div>
+      <div id="clubs-list"></div>
+    </div>
+
+    <!-- ACCOUNT TAB -->
+    <div class="tab-content" id="tab-account">
+      <!-- Change Email -->
+      <div class="card">
+        <div class="card-title">Email Address</div>
+        <div style="margin-bottom:1rem;font-size:14px;color:var(--text-2);">Current: <strong id="admin-current-email"></strong></div>
+        <div class="field-grid">
+          <div class="field full"><label>New Email Address</label><input type="email" id="adm-new-email" placeholder="new@example.com" /></div>
+          <div class="field full"><label>Current Password (to confirm)</label><input type="password" id="adm-email-pw" placeholder="••••••••" /></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:1rem;">
+          <button class="btn btn-primary" onclick="adminChangeEmail()">Request Change</button>
+          <span id="adm-email-msg" style="font-size:13px;color:var(--success);display:none;">Confirmation email sent!</span>
+          <span id="adm-email-err" style="font-size:13px;color:var(--danger);display:none;"></span>
+        </div>
+      </div>
+
+      <!-- Change Password -->
+      <div class="card">
+        <div class="card-title">Change Password</div>
+        <div class="field-grid">
+          <div class="field full"><label>Current Password</label><input type="password" id="adm-pw-current" placeholder="••••••••" /></div>
+          <div class="field"><label>New Password</label><input type="password" id="adm-pw-new" placeholder="At least 8 characters" /></div>
+          <div class="field"><label>Confirm New Password</label><input type="password" id="adm-pw-confirm" placeholder="••••••••" /></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:1rem;">
+          <button class="btn btn-primary" onclick="adminChangePassword()">Change Password</button>
+          <span id="adm-pw-msg" style="font-size:13px;color:var(--success);display:none;">Password changed!</span>
+          <span id="adm-pw-err" style="font-size:13px;color:var(--danger);display:none;"></span>
+        </div>
+      </div>
+
+      <!-- Reset Password via Email -->
+      <div class="card">
+        <div class="card-title">Reset Password via Email</div>
+        <p style="font-size:13px;color:var(--text-2);margin-bottom:1rem;">Send a password reset link to your admin email address.</p>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <button class="btn btn-ghost" onclick="adminSendReset()">Send Reset Email</button>
+          <span id="adm-reset-msg" style="font-size:13px;color:var(--success);display:none;">Reset email sent!</span>
+          <span id="adm-reset-err" style="font-size:13px;color:var(--danger);display:none;"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS TAB -->
+    <div class="tab-content" id="tab-settings">
+      <div class="card">
+        <div class="card-title">Privacy Policy</div>
+        <p style="font-size:13px;color:var(--text-2);margin-bottom:1rem;">Edit the content shown at <a href="/privacy-policy" target="_blank" style="color:var(--brand);">/privacy-policy</a>. HTML is supported.</p>
+        <div class="field">
+          <label>Policy Content</label>
+          <textarea id="pp-content" rows="20" style="font-family:monospace;font-size:13px;min-height:300px;"></textarea>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:1rem;">
+          <button class="btn btn-primary" onclick="savePrivacyPolicy()">Save Policy</button>
+          <span id="pp-msg" style="font-size:13px;color:var(--success);display:none;">Saved!</span>
+          <span id="pp-err" style="font-size:13px;color:var(--danger);display:none;"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS TAB -->
+    <div class="tab-content" id="tab-users">
+      <div class="card">
+        <div class="card-title">Create Account</div>
+        <div class="create-user-grid">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="cu-email" placeholder="newuser@example.com" />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" id="cu-password" placeholder="Min 8 characters" />
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;margin-top:auto;">
+              <input type="checkbox" id="cu-is-admin" style="width:auto;" />
+              <span>Admin</span>
+            </label>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem;margin-top:1rem;">
+          <button class="btn btn-primary" id="cu-btn" onclick="createUser()">Create Account</button>
+          <span id="cu-msg" style="font-size:13px;color:var(--success);display:none;"></span>
+          <span id="cu-err" style="font-size:13px;color:var(--danger);display:none;"></span>
+        </div>
+      </div>
+      <div id="users-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer style="background:var(--surface);border-top:1px solid var(--border);padding:1.1rem 2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+  <span style="font-size:12px;color:var(--text-3);">&copy; 2026 CubingClubs.net</span>
+  <div style="display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap;">
+    <a href="mailto:cubingclubs@gmail.com" title="Email us" style="color:var(--text-3);display:flex;align-items:center;transition:color 0.15s;" onmouseover="this.style.color='#EA4335'" onmouseout="this.style.color='var(--text-3)'">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+    </a>
+    <a href="https://tiktok.com/@cubingclubs" target="_blank" rel="noopener" title="TikTok @cubingclubs" style="color:var(--text-3);display:flex;align-items:center;transition:color 0.15s;" onmouseover="this.style.color='#010101'" onmouseout="this.style.color='var(--text-3)'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.56V6.79a4.85 4.85 0 01-1.07-.1z"/></svg>
+    </a>
+    <a href="https://instagram.com/cubingclubs" target="_blank" rel="noopener" title="Instagram @cubingclubs" style="color:var(--text-3);display:flex;align-items:center;transition:color 0.15s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='var(--text-3)'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </a>
+    <a href="https://facebook.com/cubingclubs" target="_blank" rel="noopener" title="Facebook @cubingclubs" style="color:var(--text-3);display:flex;align-items:center;transition:color 0.15s;" onmouseover="this.style.color='#1877F2'" onmouseout="this.style.color='var(--text-3)'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+    </a>
+    <div style="width:1px;height:16px;background:var(--border);"></div>
+    <button onclick="document.getElementById('report-modal-admin').style.display='flex'" style="background:#DC2626;color:#fff;border:none;border-radius:6px;padding:5px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#DC2626'">Report</button>
+  </div>
+</footer>
+<div id="report-modal-admin" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:600;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="background:var(--surface);border-radius:12px;max-width:420px;width:100%;padding:1.75rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;">
+    <button onclick="document.getElementById('report-modal-admin').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;line-height:1;">✕</button>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:0.75rem;">Notice an issue?</div>
+    <p style="font-size:14px;color:var(--text-2);line-height:1.6;">Report it to us at <a href="mailto:cubingclubs@gmail.com" style="color:var(--brand);font-weight:600;">cubingclubs@gmail.com</a></p>
+  </div>
+</div>
+
+<!-- DENY MODAL -->
+<div class="modal-overlay" id="deny-modal" style="display:none;" onclick="handleDenyModalClick(event)">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <span class="modal-title">Deny Club</span>
+      <button class="modal-close" onclick="closeDenyModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text-2);margin-bottom:1rem;">This message will be shown to the club owner in place of "Pending approval."</p>
+      <div style="display:flex;flex-direction:column;gap:5px;">
+        <label>Message to club owner</label>
+        <textarea id="deny-message" rows="3" placeholder="e.g. Your club listing is incomplete. Please add a valid meeting address and description before resubmitting."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span id="deny-err" style="font-size:13px;color:var(--danger);"></span>
+      <div style="display:flex;gap:8px;margin-left:auto;">
+        <button class="btn btn-ghost" onclick="closeDenyModal()">Cancel</button>
+        <button class="btn btn-danger" onclick="submitDeny()">Send &amp; Deny</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- USER EDIT MODAL -->
+<div class="modal-overlay" id="user-edit-modal" style="display:none;" onclick="if(event.target===this)closeUserEditModal()">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <span class="modal-title">Edit User</span>
+      <button class="modal-close" onclick="closeUserEditModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--text-3);margin-bottom:1.25rem;" id="user-edit-current-email"></p>
+
+      <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem;">Change Email</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <label>New email address</label>
+            <input type="email" id="uem-email" placeholder="new@example.com" />
+          </div>
+          <button class="btn btn-primary" style="margin-top:.6rem;width:100%;" onclick="adminSaveEmail()">Update Email</button>
+          <span id="uem-msg" style="font-size:13px;display:none;margin-top:6px;"></span>
+        </div>
+
+        <div style="border-top:1px solid var(--border);padding-top:1rem;">
+          <div style="font-size:12px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.6rem;">Change Password</div>
+          <div style="display:flex;flex-direction:column;gap:5px;">
+            <label>New password</label>
+            <input type="password" id="uem-password" placeholder="Min 8 characters" />
+          </div>
+          <p style="font-size:12px;color:var(--text-3);margin-top:5px;">Their existing sessions will be logged out.</p>
+          <button class="btn btn-primary" style="margin-top:.6rem;width:100%;" onclick="adminSavePassword()">Update Password</button>
+          <span id="uem-pw-msg" style="font-size:13px;display:none;margin-top:6px;"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MEETINGS MODAL -->
+<div class="modal-overlay" id="meetings-modal" style="display:none;" onclick="if(event.target===this)closeMeetingsModal()">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <span class="modal-title" id="meetings-modal-title">Meetings</span>
+      <button class="modal-close" onclick="closeMeetingsModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1rem;">
+        <button class="btn btn-primary btn-sm" onclick="openAdminMeetingEdit(null)">+ Add Meeting</button>
+      </div>
+      <div id="admin-meetings-list"><p style="font-size:13px;color:var(--text-3);">Loading…</p></div>
+    </div>
+    <div class="modal-footer" style="justify-content:flex-end;">
+      <button class="btn btn-ghost" onclick="closeMeetingsModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD/EDIT MEETING MODAL (admin) -->
+<div class="modal-overlay" id="admin-meeting-edit-modal" style="display:none;" onclick="if(event.target===this)closeAdminMeetingEdit()">
+  <div class="modal" style="max-width:500px;">
+    <div class="modal-header">
+      <span class="modal-title" id="admin-meeting-edit-title">Add Meeting</span>
+      <button class="modal-close" onclick="closeAdminMeetingEdit()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-grid">
+        <div class="field full"><label>Meeting Type</label><input type="text" id="am-meeting_type" placeholder="Club Meeting, Beginner Lesson…" /></div>
+        <div class="field full"><label>Date</label><input type="date" id="am-date" /></div>
+        <div class="field"><label>Start Time</label><input type="time" id="am-time" /></div>
+        <div class="field"><label>End Time <span style="font-weight:400;color:var(--text-3)">(optional)</span></label><input type="time" id="am-end_time" /></div>
+        <div class="field full"><label>Location Name <span style="font-weight:400;color:var(--text-3)">(optional)</span></label><input type="text" id="am-location_name" placeholder="e.g. School Library" /></div>
+        <div class="field full"><label>Address</label><input type="text" id="am-address" placeholder="Street address" /></div>
+        <div class="field"><label>City</label><input type="text" id="am-city" /></div>
+        <div class="field"><label>State</label><input type="text" id="am-state" /></div>
+        <div class="field"><label>Country</label><input type="text" id="am-country" /></div>
+        <div class="field full"><label>Notes <span style="font-weight:400;color:var(--text-3)">(optional)</span></label><textarea id="am-notes" style="min-height:60px;"></textarea></div>
+      </div>
+      <div id="am-err" style="font-size:13px;color:var(--danger);margin-top:0.75rem;display:none;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeAdminMeetingEdit()">Cancel</button>
+      <button class="btn btn-primary" id="am-save-btn" onclick="saveAdminMeeting()">Save Meeting</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT CLUB MODAL -->
+<div class="modal-overlay" id="edit-modal" style="display:none;" onclick="handleModalClick(event)">
+  <div class="modal" id="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="edit-modal-title">Edit Club</span>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="section-title">Basic Info</div>
+      <div class="form-row">
+        <div class="field full"><label>Club Name</label><input type="text" id="m-name" /></div>
+      </div>
+      <div class="form-row">
+        <div class="field full"><label>Address Line 1</label>
+          <div class="addr-wrap">
+            <input type="text" id="m-address" placeholder="Start typing to search…" autocomplete="off"
+              oninput="addrInput(this.value,'m')" onkeydown="addrKey(event,'m')" onblur="addrBlur('m')" />
+            <div class="addr-suggestions" id="m-addr-suggestions"></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field full"><label>Address Line 2</label><input type="text" id="m-address_line2" placeholder="Suite, Building, etc." autocomplete="address-line2" /></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>City</label><input type="text" id="m-city" autocomplete="address-level2" /></div>
+        <div class="field"><label>State / Province</label><input type="text" id="m-state" autocomplete="address-level1" /></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>ZIP / Postal Code</label><input type="text" id="m-postal_code" autocomplete="postal-code" /></div>
+        <div class="field"><label>Country</label><input type="text" id="m-country" autocomplete="country-name" /></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>School Type <span style="font-weight:400;color:var(--text-3)">(blank if not a school)</span></label>
+          <select id="m-school_type" style="font-family:inherit;font-size:14px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--text);outline:none;width:100%;">
+            <option value="">Not a school club</option>
+            <option value="public">Public</option>
+            <option value="k12">K-12</option>
+            <option value="elementary">Elementary School</option>
+            <option value="middle">Middle School</option>
+            <option value="high">High School</option>
+            <option value="college">College / University</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Contact Email</label><input type="email" id="m-contact" /></div>
+        <div class="field"><label>Website</label><input type="text" id="m-website" /></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Logo URL</label><input type="text" id="m-logo_url" /></div>
+      </div>
+
+      <div class="section-title">Map Coordinates <span style="font-size:11px;font-weight:400;color:var(--text-3);text-transform:none;">(auto-filled from address, override if needed)</span></div>
+      <div class="form-row">
+        <div class="field"><label>Latitude</label><input type="number" id="m-lat" step="any" /></div>
+        <div class="field"><label>Longitude</label><input type="number" id="m-lng" step="any" /></div>
+      </div>
+
+      <div class="section-title">Description</div>
+      <div class="form-row single">
+        <div class="field"><label>About the club</label><textarea id="m-description" rows="3"></textarea></div>
+      </div>
+
+      <div class="section-title">Status</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Approval</label>
+          <select id="m-approved">
+            <option value="0">Pending</option>
+            <option value="1">Approved</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Visibility</label>
+          <select id="m-visible">
+            <option value="1">Visible</option>
+            <option value="0">Hidden</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row single">
+        <div class="field">
+          <label>Denial message <span style="font-weight:400;color:var(--text-3)">(shown to owner if not approved)</span></label>
+          <input type="text" id="m-denial_message" placeholder="Leave blank if pending, fill in to deny with a reason" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <div>
+        <span class="modal-msg" id="modal-msg" style="display:none;"></span>
+        <span class="modal-err" id="modal-err" style="display:none;"></span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="modal-save-btn" onclick="saveModal()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Address autocomplete ──────────────────────────────────────────────────
+const _addrTimers = {}, _addrFeatures = {}, _addrFocused = {};
+function addrInput(val, prefix) {
+  clearTimeout(_addrTimers[prefix]);
+  if (val.length < 3) { addrHide(prefix); return; }
+  _addrTimers[prefix] = setTimeout(() => addrFetch(val, prefix), 300);
+}
+async function addrFetch(query, prefix) {
+  try {
+    const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=5`);
+    const data = await res.json();
+    addrShow(data.features || [], prefix);
+  } catch { addrHide(prefix); }
+}
+function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function addrShow(features, prefix) {
+  _addrFeatures[prefix] = features; _addrFocused[prefix] = -1;
+  const box = document.getElementById(prefix + '-addr-suggestions');
+  if (!features.length) { box.style.display = 'none'; return; }
+  box.innerHTML = features.map((f, i) => {
+    const p = f.properties;
+    const main = [p.housenumber, p.street || p.name].filter(Boolean).join(' ') || p.name || '';
+    const sub = [p.city || p.town || p.village || p.county, p.state, p.country].filter(Boolean).join(', ');
+    return `<div class="addr-suggestion" data-i="${i}" onmousedown="addrPick(event,${i},'${prefix}')">
+      <div class="addr-suggestion-main">${esc2(main)}</div>
+      ${sub ? `<div class="addr-suggestion-sub">${esc2(sub)}</div>` : ''}
+    </div>`;
+  }).join('');
+  box.style.display = 'block';
+}
+function addrPick(e, i, prefix) {
+  e.preventDefault();
+  const p = (_addrFeatures[prefix] || [])[i]?.properties; if (!p) return;
+  const line1 = [p.housenumber, p.street || p.name].filter(Boolean).join(' ') || p.name || '';
+  const setV = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+  setV(prefix + '-address', line1);
+  setV(prefix + '-city', p.city || p.town || p.village || p.county || '');
+  setV(prefix + '-state', p.state || '');
+  setV(prefix + '-postal_code', p.postcode || '');
+  setV(prefix + '-country', p.country || '');
+  addrHide(prefix);
+}
+function addrKey(e, prefix) {
+  const box = document.getElementById(prefix + '-addr-suggestions');
+  if (box.style.display === 'none') return;
+  const items = box.querySelectorAll('.addr-suggestion');
+  if (!items.length) return;
+  if (e.key === 'ArrowDown') { e.preventDefault(); addrMoveFocus(prefix, 1, items); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); addrMoveFocus(prefix, -1, items); }
+  else if (e.key === 'Enter' && _addrFocused[prefix] >= 0) { e.preventDefault(); addrPick(e, _addrFocused[prefix], prefix); }
+  else if (e.key === 'Escape') addrHide(prefix);
+}
+function addrMoveFocus(prefix, dir, items) {
+  const n = items.length;
+  _addrFocused[prefix] = ((_addrFocused[prefix] ?? -1) + dir + n) % n;
+  items.forEach((el, i) => el.classList.toggle('focused', i === _addrFocused[prefix]));
+}
+function addrBlur(prefix) { setTimeout(() => addrHide(prefix), 150); }
+function addrHide(prefix) { const box = document.getElementById(prefix + '-addr-suggestions'); if (box) box.style.display = 'none'; }
+// ─────────────────────────────────────────────────────────────────────────
+
+let allClubs = [];
+let allUsers = [];
+let editingClubId = null;
+
+const MODAL_FIELDS = ["name","address","address_line2","city","state","postal_code","country","school_type","contact","website","logo_url","lat","lng","description","denial_message"];
+let denyingClubId = null;
+
+async function init() {
+  const res = await fetch("/api/auth/me", { credentials: "include" });
+  if (!res.ok) { showLogin(); return; }
+  const { user } = await res.json();
+  if (!user.is_admin) { window.location.href = "/dashboard"; return; }
+  showPanel(user);
+  await loadAll();
+}
+
+function showLogin() {
+  document.getElementById("login-screen").style.display = "block";
+  document.getElementById("main-nav").innerHTML = `
+    <a href="/">Clubs</a>
+    <div class="nav-divider"></div>
+    <a href="/dashboard" class="header-cta-outline">Log In</a>
+    <a href="/signup" class="header-cta">Sign Up</a>`;
+}
+
+function showPanel(user) {
+  document.getElementById("admin-panel").style.display = "block";
+  setAdminEmail(user.email);
+  document.getElementById("main-nav").innerHTML = `
+    <a href="/">Clubs</a>
+    <div class="nav-divider"></div>
+    <button class="nav-bell" id="notify-btn" onclick="toggleNotifications()" title="Enable push notifications">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+    </button>
+    <a href="/admin" class="active header-cta-outline">Admin Dashboard</a>
+    <a href="#" class="header-cta" onclick="event.preventDefault();doLogout()">Log Out</a>`;
+  initNotifyBtn();
+}
+
+async function loadAll() {
+  const [clubsRes, usersRes] = await Promise.all([
+    fetch("/api/admin/clubs", { credentials: "include" }),
+    fetch("/api/admin/users", { credentials: "include" })
+  ]);
+  allClubs = clubsRes.ok ? await clubsRes.json() : [];
+  allUsers = usersRes.ok ? await usersRes.json() : [];
+  renderStats();
+  renderRequests();
+  renderAllClubs();
+  renderUsers();
+}
+
+function renderStats() {
+  const pending = allClubs.filter(c => !c.approved && !c.denial_message).length;
+  document.getElementById("stat-total").textContent = allClubs.length;
+  document.getElementById("stat-pending").textContent = pending;
+  const badge = document.getElementById("pending-badge");
+  badge.textContent = pending;
+  badge.className = "badge" + (pending === 0 ? " zero" : "");
+  if (pending === 0 && 'clearAppBadge' in navigator) navigator.clearAppBadge();
+  else if (pending > 0 && 'setAppBadge' in navigator) navigator.setAppBadge(pending);
+}
+
+function clubStatusPill(club) {
+  if (!club.approved && club.denial_message) return `<span class="status-pill" style="background:var(--danger-light);color:var(--danger);">Denied</span>`;
+  if (!club.approved) return `<span class="status-pill pending">Pending</span>`;
+  if (!club.visible) return `<span class="status-pill hidden">Hidden</span>`;
+  return `<span class="status-pill approved">Approved</span>`;
+}
+
+function renderRequests() {
+  const pending = allClubs.filter(c => !c.approved && !c.denial_message);
+  const el = document.getElementById("requests-list");
+  if (pending.length === 0) {
+    el.innerHTML = `<div class="empty-state">No pending requests — all caught up!</div>`;
+    return;
+  }
+  el.innerHTML = pending.map(c => `
+    <div class="club-row" id="req-row-${c.id}">
+      <div class="club-row-info">
+        <div class="club-row-name">${esc(c.name) || "(unnamed club)"}</div>
+        <div class="club-row-meta">${esc(c.city)}${c.city && c.country ? ", " : ""}${esc(c.country)} &middot; ${esc(c.user_email)} &middot; Submitted ${fmtDate(c.created_at)}</div>
+      </div>
+      <div class="club-row-actions">
+        <button class="btn btn-sm btn-ghost" onclick="openEdit(${c.id})">Edit</button>
+        <button class="btn btn-sm btn-warn" onclick="openDenyModal(${c.id})">Deny</button>
+        <button class="btn btn-sm btn-success" onclick="approve(${c.id}, true)">Approve</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderAllClubs() {
+  const el = document.getElementById("clubs-list");
+  if (allClubs.length === 0) {
+    el.innerHTML = `<div class="empty-state">No clubs yet.</div>`;
+    return;
+  }
+  el.innerHTML = allClubs.map(c => `
+    <div class="club-row" id="club-row-${c.id}">
+      ${clubStatusPill(c)}
+      <div class="club-row-info">
+        <div class="club-row-name">${esc(c.name) || "(unnamed club)"}</div>
+        <div class="club-row-meta">${esc(c.city)}${c.city && c.country ? ", " : ""}${esc(c.country)} &middot; ${esc(c.user_email)}</div>
+      </div>
+      <div class="club-row-actions">
+        <button class="btn btn-sm btn-ghost" onclick="openEdit(${c.id})">Edit</button>
+        <button class="btn btn-sm btn-ghost" onclick="openMeetingsModal(${c.id}, '${esc(c.name)}')">Meetings</button>
+        ${c.approved
+          ? `<button class="btn btn-sm btn-warn" onclick="openDenyModal(${c.id})">Deny</button>`
+          : `<button class="btn btn-sm btn-success" onclick="approve(${c.id}, true)">Approve</button>`}
+        <button class="btn btn-sm btn-danger" onclick="deleteClub(${c.id}, '${esc(c.name)}')">Delete</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+function renderUsers() {
+  const el = document.getElementById("users-list");
+  if (allUsers.length === 0) {
+    el.innerHTML = `<div class="empty-state">No users yet.</div>`;
+    return;
+  }
+  el.innerHTML = allUsers.map(u => `
+    <div class="user-row">
+      <div class="user-avatar">${esc(u.email[0].toUpperCase())}</div>
+      <div class="user-info">
+        <div class="user-email">${esc(u.email)}</div>
+        <div class="user-meta">
+          ${u.club_name ? `Club: ${esc(u.club_name)}` : "No club yet"}
+          &middot; Joined ${fmtDate(u.created_at)}
+        </div>
+      </div>
+      ${u.is_admin ? `<span class="admin-tag">Admin</span>` : ""}
+      <button class="btn btn-sm btn-ghost" onclick="openUserEditModal(${u.id}, '${esc(u.email)}')">Edit</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id}, '${esc(u.email)}')">Delete</button>
+    </div>
+  `).join("");
+}
+
+function openDenyModal(clubId) {
+  denyingClubId = clubId;
+  document.getElementById("deny-message").value = "";
+  document.getElementById("deny-err").textContent = "";
+  document.getElementById("deny-modal").style.display = "flex";
+  setTimeout(() => document.getElementById("deny-message").focus(), 50);
+}
+
+function closeDenyModal() {
+  document.getElementById("deny-modal").style.display = "none";
+  denyingClubId = null;
+}
+
+function handleDenyModalClick(e) {
+  if (e.target === document.getElementById("deny-modal")) closeDenyModal();
+}
+
+async function submitDeny() {
+  const message = document.getElementById("deny-message").value.trim();
+  const errEl = document.getElementById("deny-err");
+  if (!message) { errEl.textContent = "Please enter a message for the club owner."; return; }
+  errEl.textContent = "";
+
+  const res = await fetch("/api/admin/approve", {
+    method: "POST", credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ club_id: denyingClubId, approved: false, message })
+  });
+  if (res.ok) {
+    const club = allClubs.find(c => c.id === denyingClubId);
+    if (club) { club.approved = 0; club.denial_message = message; }
+    clearSubmissionNotifications();
+    closeDenyModal();
+    renderStats(); renderRequests(); renderAllClubs();
+  }
+}
+
+async function deleteClub(clubId, name) {
+  if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+  const res = await fetch("/api/admin/delete-club", {
+    method: "POST", credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ club_id: clubId })
+  });
+  if (res.ok) {
+    allClubs = allClubs.filter(c => c.id !== clubId);
+    renderStats(); renderRequests(); renderAllClubs();
+  }
+}
+
+async function deleteUser(userId, email) {
+  if (!confirm(`Delete account "${email}" and all their data? This cannot be undone.`)) return;
+  const res = await fetch("/api/admin/delete-user", {
+    method: "POST", credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId })
+  });
+  if (res.ok) {
+    allUsers = allUsers.filter(u => u.id !== userId);
+    allClubs = allClubs.filter(c => c.user_id !== userId);
+    renderStats(); renderRequests(); renderAllClubs(); renderUsers();
+  }
+}
+
+function clearSubmissionNotifications() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.getNotifications({ tag: 'club-submission' }).then(notifications => {
+        notifications.forEach(n => n.close());
+      });
+    }).catch(() => {});
+  }
+}
+
+async function approve(clubId, approved) {
+  const res = await fetch("/api/admin/approve", {
+    method: "POST", credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ club_id: clubId, approved })
+  });
+  if (res.ok) {
+    const club = allClubs.find(c => c.id === clubId);
+    if (club) club.approved = approved ? 1 : 0;
+    clearSubmissionNotifications();
+    renderStats();
+    renderRequests();
+    renderAllClubs();
+  }
+}
+
+function openEdit(clubId) {
+  const club = allClubs.find(c => c.id === clubId);
+  if (!club) return;
+  editingClubId = clubId;
+  MODAL_FIELDS.forEach(f => {
+    const el = document.getElementById("m-" + f);
+    if (el) el.value = club[f] ?? "";
+  });
+  document.getElementById("m-approved").value = club.approved ? "1" : "0";
+  document.getElementById("m-visible").value = club.visible !== 0 ? "1" : "0";
+  document.getElementById("modal-msg").style.display = "none";
+  document.getElementById("modal-err").style.display = "none";
+  document.getElementById("edit-modal-title").textContent = "Edit Club";
+  document.getElementById("modal-save-btn").textContent = "Save Changes";
+  document.getElementById("edit-modal").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("edit-modal").style.display = "none";
+  editingClubId = null;
+}
+
+function handleModalClick(e) {
+  if (e.target === document.getElementById("edit-modal")) closeModal();
+}
+
+function openCreateClub() {
+  editingClubId = null;
+  MODAL_FIELDS.forEach(f => {
+    const el = document.getElementById("m-" + f);
+    if (el) el.value = "";
+  });
+  document.getElementById("m-approved").value = "1";
+  document.getElementById("m-visible").value = "1";
+  document.getElementById("modal-msg").style.display = "none";
+  document.getElementById("modal-err").style.display = "none";
+  document.getElementById("edit-modal-title").textContent = "New Club";
+  document.getElementById("modal-save-btn").textContent = "Create Club";
+  document.getElementById("edit-modal").style.display = "flex";
+}
+
+async function saveModal() {
+  const btn = document.getElementById("modal-save-btn");
+  const msg = document.getElementById("modal-msg");
+  const err = document.getElementById("modal-err");
+  msg.style.display = "none"; err.style.display = "none";
+  btn.disabled = true; btn.textContent = "Saving...";
+
+  const isCreate = editingClubId === null;
+  const body = isCreate ? {} : { club_id: editingClubId };
+  MODAL_FIELDS.forEach(f => {
+    const el = document.getElementById("m-" + f);
+    if (el) body[f] = ["members","founded","lat","lng"].includes(f) ? (el.value ? +el.value : null) : el.value;
+  });
+  body.approved = parseInt(document.getElementById("m-approved").value);
+  body.visible = parseInt(document.getElementById("m-visible").value);
+
+  // Auto-geocode if lat/lng are blank
+  if (!body.lat && !body.lng) {
+    const coords = await geocodeAddress([body.address, body.city, body.state, body.country].filter(Boolean).join(', '));
+    if (coords) { body.lat = coords.lat; body.lng = coords.lng; }
+  }
+
+  const endpoint = isCreate ? "/api/admin/create-club" : "/api/admin/club/update";
+  const res = await fetch(endpoint, {
+    method: "POST", credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  btn.disabled = false;
+  btn.textContent = isCreate ? "Create Club" : "Save Changes";
+  if (!res.ok) {
+    err.textContent = data.error; err.style.display = "block"; return;
+  }
+  if (isCreate) {
+    allClubs.unshift({ ...data.club, user_email: null });
+    closeModal();
+  } else {
+    const idx = allClubs.findIndex(c => c.id === editingClubId);
+    if (idx !== -1) allClubs[idx] = { ...allClubs[idx], ...data.club };
+    msg.textContent = "Saved!"; msg.style.display = "block";
+    setTimeout(() => { msg.style.display = "none"; }, 2000);
+  }
+  renderStats(); renderRequests(); renderAllClubs();
+}
+
+async function geocodeAddress(query) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`, {
+      headers: { 'User-Agent': 'CubingClubs.net/1.0' }
+    });
+    const data = await res.json();
+    if (data && data[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  } catch {}
+  return null;
+}
+
+async function createUser() {
+  const btn = document.getElementById("cu-btn");
+  const msg = document.getElementById("cu-msg");
+  const err = document.getElementById("cu-err");
+  msg.style.display = "none"; err.style.display = "none";
+  const email = document.getElementById("cu-email").value.trim();
+  const password = document.getElementById("cu-password").value;
+  const is_admin = document.getElementById("cu-is-admin").checked ? 1 : 0;
+  if (!email || !password) { err.textContent = "Email and password are required."; err.style.display = "block"; return; }
+  btn.disabled = true; btn.textContent = "Creating...";
+  const res = await fetch("/api/admin/create-user", {
+    method: "POST", credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, is_admin })
+  });
+  const data = await res.json();
+  btn.disabled = false; btn.textContent = "Create Account";
+  if (!res.ok) { err.textContent = data.error; err.style.display = "block"; return; }
+  document.getElementById("cu-email").value = "";
+  document.getElementById("cu-password").value = "";
+  document.getElementById("cu-is-admin").checked = false;
+  msg.textContent = `Account created for ${data.email}`; msg.style.display = "block";
+  setTimeout(() => { msg.style.display = "none"; }, 4000);
+  await loadAll();
+}
+
+async function doLogin() {
+  const btn = document.getElementById("login-btn");
+  const err = document.getElementById("login-error");
+  const email = document.getElementById("login-email").value.trim();
+  const password = document.getElementById("login-password").value;
+  err.classList.remove("visible");
+  btn.disabled = true; btn.textContent = "Logging in...";
+  const res = await fetch("/api/auth/login", {
+    method: "POST", credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+  const data = await res.json();
+  btn.disabled = false; btn.textContent = "Log In";
+  if (!res.ok) { err.textContent = data.error; err.classList.add("visible"); return; }
+  if (!data.user.is_admin) { window.location.href = "/dashboard"; return; }
+  document.getElementById("login-screen").style.display = "none";
+  showPanel(data.user);
+  await loadAll();
+}
+
+async function doLogout() {
+  await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+  window.location.href = "/";
+}
+
+// ── User edit modal ──────────────────────────────────────────────────────────
+let _editingUserId = null;
+
+function openUserEditModal(userId, email) {
+  _editingUserId = userId;
+  document.getElementById('user-edit-current-email').textContent = `Editing: ${email}`;
+  document.getElementById('uem-email').value = '';
+  document.getElementById('uem-password').value = '';
+  ['uem-msg','uem-pw-msg'].forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none'; el.textContent = '';
+  });
+  document.getElementById('user-edit-modal').style.display = 'flex';
+}
+
+function closeUserEditModal() {
+  document.getElementById('user-edit-modal').style.display = 'none';
+  _editingUserId = null;
+}
+
+async function adminSaveEmail() {
+  const email = document.getElementById('uem-email').value.trim();
+  const msg = document.getElementById('uem-msg');
+  msg.style.display = 'none';
+  if (!email) { showUserMsg(msg, 'Enter a new email address.', false); return; }
+
+  const res = await fetch('/api/admin/user/change-email', {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: _editingUserId, new_email: email })
+  });
+  const data = await res.json();
+  if (!res.ok) { showUserMsg(msg, data.error, false); return; }
+
+  // Update local list
+  const u = allUsers.find(u => u.id === _editingUserId);
+  if (u) { u.email = data.email; renderUsers(); }
+  document.getElementById('user-edit-current-email').textContent = `Editing: ${data.email}`;
+  document.getElementById('uem-email').value = '';
+  showUserMsg(msg, 'Email updated!', true);
+}
+
+async function adminSavePassword() {
+  const pw = document.getElementById('uem-password').value;
+  const msg = document.getElementById('uem-pw-msg');
+  msg.style.display = 'none';
+  if (!pw) { showUserMsg(msg, 'Enter a new password.', false); return; }
+  if (pw.length < 8) { showUserMsg(msg, 'Password must be at least 8 characters.', false); return; }
+
+  const res = await fetch('/api/admin/user/change-password', {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: _editingUserId, new_password: pw })
+  });
+  const data = await res.json();
+  if (!res.ok) { showUserMsg(msg, data.error, false); return; }
+  document.getElementById('uem-password').value = '';
+  showUserMsg(msg, 'Password updated — user logged out of all sessions.', true);
+}
+
+function showUserMsg(el, text, success) {
+  el.textContent = text;
+  el.style.color = success ? 'var(--success)' : 'var(--danger)';
+  el.style.display = 'block';
+}
+
+async function loadPrivacyPolicy() {
+  try {
+    const res = await fetch("/api/admin/privacy-policy", { credentials: "include" });
+    const { content } = await res.json();
+    document.getElementById("pp-content").value = content || "";
+  } catch { /* ignore */ }
+}
+
+async function savePrivacyPolicy() {
+  const content = document.getElementById("pp-content").value;
+  const msgEl = document.getElementById("pp-msg");
+  const errEl = document.getElementById("pp-err");
+  msgEl.style.display = "none";
+  errEl.style.display = "none";
+  try {
+    const res = await fetch("/api/admin/privacy-policy", {
+      method: "POST", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content })
+    });
+    if (res.ok) { msgEl.style.display = "inline"; setTimeout(() => msgEl.style.display = "none", 3000); }
+    else { const d = await res.json(); errEl.textContent = d.error || "Save failed"; errEl.style.display = "inline"; }
+  } catch { errEl.textContent = "Network error"; errEl.style.display = "inline"; }
+}
+
+function switchTab(name) {
+  if (name === "settings") loadPrivacyPolicy();
+  document.querySelectorAll(".tab-content").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".tab-btn").forEach(el => el.classList.remove("active"));
+  document.getElementById("tab-" + name).classList.add("active");
+  document.getElementById("tab-btn-" + name).classList.add("active");
+}
+
+function esc(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function fmtDate(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+// ── Push notifications ─────────────────────────────────────────────────────
+let vapidPublicKey = null;
+
+async function initNotifyBtn() {
+  const btn = document.getElementById("notify-btn");
+  if (!btn || !("Notification" in window) || !("serviceWorker" in navigator)) {
+    if (btn) btn.style.display = "none";
+    return;
+  }
+  if (!vapidPublicKey) {
+    try {
+      const r = await fetch("/api/admin/push-subscribe", { credentials: "include" });
+      const d = await r.json();
+      vapidPublicKey = d.publicKey;
+    } catch {}
+  }
+  if (!vapidPublicKey) { btn.style.display = "none"; return; }
+
+  const reg = await navigator.serviceWorker.ready;
+  const existing = await reg.pushManager.getSubscription();
+  setNotifyBtnState(!!existing);
+}
+
+function setNotifyBtnState(subscribed) {
+  const btn = document.getElementById("notify-btn");
+  if (!btn) return;
+  btn.classList.toggle("subscribed", subscribed);
+  btn.title = subscribed ? "Push notifications on — click to disable" : "Enable push notifications";
+}
+
+function urlB64ToUint8(b64) {
+  const pad = "=".repeat((4 - b64.length % 4) % 4);
+  const raw = atob((b64 + pad).replace(/-/g, "+").replace(/_/g, "/"));
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
+
+async function toggleNotifications() {
+  if (!("Notification" in window) || !("serviceWorker" in navigator)) {
+    alert("Push notifications are not supported in this browser.");
+    return;
+  }
+  const reg = await navigator.serviceWorker.ready;
+  const existing = await reg.pushManager.getSubscription();
+
+  if (existing) {
+    await existing.unsubscribe();
+    await fetch("/api/admin/push-subscribe", {
+      method: "POST", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({})
+    });
+    setNotifyBtnState(false);
+    return;
+  }
+
+  const permission = await Notification.requestPermission();
+  if (permission !== "granted") return;
+
+  try {
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlB64ToUint8(vapidPublicKey)
+    });
+    const { endpoint, keys } = sub.toJSON();
+    await fetch("/api/admin/push-subscribe", {
+      method: "POST", credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ endpoint, p256dh: keys.p256dh, auth: keys.auth })
+    });
+    setNotifyBtnState(true);
+  } catch (e) {
+    alert("Could not subscribe to notifications. Check that VAPID keys are configured.");
+  }
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") { closeModal(); closeDenyModal(); closeMeetingsModal(); closeAdminMeetingEdit(); }
+  if (e.key === "Enter" && document.getElementById("login-screen").style.display !== "none") doLogin();
+});
+
+// ── Admin account management ───────────────────────────────────────────────
+let _adminEmail = '';
+
+function setAdminEmail(email) {
+  _adminEmail = email;
+  const el = document.getElementById('admin-current-email');
+  if (el) el.textContent = email;
+}
+
+async function adminChangeEmail() {
+  const msgEl = document.getElementById('adm-email-msg');
+  const errEl = document.getElementById('adm-email-err');
+  msgEl.style.display = 'none'; errEl.style.display = 'none';
+  const newEmail = document.getElementById('adm-new-email').value.trim();
+  const password = document.getElementById('adm-email-pw').value;
+  if (!newEmail || !password) { errEl.textContent = 'Email and password are required.'; errEl.style.display = 'block'; return; }
+  const res = await fetch('/api/auth/change-email', {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ new_email: newEmail, password })
+  });
+  const data = await res.json();
+  if (!res.ok) { errEl.textContent = data.error; errEl.style.display = 'block'; return; }
+  msgEl.style.display = 'block';
+  document.getElementById('adm-new-email').value = '';
+  document.getElementById('adm-email-pw').value = '';
+}
+
+async function adminChangePassword() {
+  const msgEl = document.getElementById('adm-pw-msg');
+  const errEl = document.getElementById('adm-pw-err');
+  msgEl.style.display = 'none'; errEl.style.display = 'none';
+  const current = document.getElementById('adm-pw-current').value;
+  const newPw = document.getElementById('adm-pw-new').value;
+  const confirm = document.getElementById('adm-pw-confirm').value;
+  if (!current || !newPw || !confirm) { errEl.textContent = 'All fields are required.'; errEl.style.display = 'block'; return; }
+  if (newPw.length < 8) { errEl.textContent = 'New password must be at least 8 characters.'; errEl.style.display = 'block'; return; }
+  if (newPw !== confirm) { errEl.textContent = 'Passwords do not match.'; errEl.style.display = 'block'; return; }
+  const res = await fetch('/api/auth/change-password', {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ current_password: current, new_password: newPw })
+  });
+  const data = await res.json();
+  if (!res.ok) { errEl.textContent = data.error; errEl.style.display = 'block'; return; }
+  msgEl.style.display = 'block';
+  document.getElementById('adm-pw-current').value = '';
+  document.getElementById('adm-pw-new').value = '';
+  document.getElementById('adm-pw-confirm').value = '';
+  setTimeout(() => { msgEl.style.display = 'none'; }, 4000);
+}
+
+async function adminSendReset() {
+  const msgEl = document.getElementById('adm-reset-msg');
+  const errEl = document.getElementById('adm-reset-err');
+  msgEl.style.display = 'none'; errEl.style.display = 'none';
+  const res = await fetch('/api/auth/forgot-password', {
+    method: 'POST', credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: _adminEmail, turnstile_token: '' })
+  });
+  if (res.ok) { msgEl.style.display = 'block'; setTimeout(() => { msgEl.style.display = 'none'; }, 5000); }
+  else { errEl.textContent = 'Failed to send reset email.'; errEl.style.display = 'block'; }
+}
+
+// ── Admin meetings management ───────────────────────────────────────────────
+let _meetingsClubId = null;
+let _editingAdminMeetingId = null;
+
+async function openMeetingsModal(clubId, clubName) {
+  _meetingsClubId = clubId;
+  document.getElementById('meetings-modal-title').textContent = `Meetings — ${clubName}`;
+  document.getElementById('meetings-modal').style.display = 'flex';
+  await loadAdminMeetings();
+}
+
+function closeMeetingsModal() {
+  document.getElementById('meetings-modal').style.display = 'none';
+  _meetingsClubId = null;
+}
+
+function fmt12(t) {
+  if (!t) return '';
+  const [h, m] = t.split(':').map(Number);
+  return `${h % 12 || 12}:${String(m).padStart(2,'0')} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
+async function loadAdminMeetings() {
+  const el = document.getElementById('admin-meetings-list');
+  el.innerHTML = '<p style="font-size:13px;color:var(--text-3);">Loading…</p>';
+  const res = await fetch(`/api/admin/meetings?club_id=${_meetingsClubId}`, { credentials: 'include' });
+  const data = await res.json();
+  const meetings = data.meetings || [];
+  if (!meetings.length) {
+    el.innerHTML = '<p style="font-size:13px;color:var(--text-3);">No meetings yet.</p>';
+    return;
+  }
+  el.innerHTML = meetings.map(m => {
+    const timeStr = m.time ? fmt12(m.time) + (m.end_time ? ' – ' + fmt12(m.end_time) : '') : '';
+    const loc = [m.address, m.city, m.state].filter(Boolean).join(', ');
+    return `<div style="display:flex;align-items:center;gap:0.75rem;padding:0.75rem 0;border-bottom:1px solid var(--border);">
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:600;">${esc(m.meeting_type || 'Meeting')} <span style="font-size:12px;font-weight:400;color:var(--text-3);">${esc(m.date)}</span></div>
+        <div style="font-size:12px;color:var(--text-3);">${timeStr ? timeStr + ' · ' : ''}${loc || 'No location'}</div>
+      </div>
+      <button class="btn btn-sm btn-ghost" onclick="openAdminMeetingEdit(${JSON.stringify(m).replace(/"/g,'&quot;')})">Edit</button>
+      <button class="btn btn-sm btn-danger" style="background:var(--danger-light);color:var(--danger);border:1px solid #fca5a5;" onclick="deleteAdminMeeting(${m.id})">Delete</button>
+    </div>`;
+  }).join('');
+}
+
+function openAdminMeetingEdit(meeting) {
+  _editingAdminMeetingId = meeting ? meeting.id : null;
+  document.getElementById('admin-meeting-edit-title').textContent = meeting ? 'Edit Meeting' : 'Add Meeting';
+  const fields = ['meeting_type','date','time','end_time','location_name','address','city','state','country','notes'];
+  fields.forEach(f => {
+    const el = document.getElementById('am-' + f);
+    if (el) el.value = meeting ? (meeting[f] || '') : '';
+  });
+  document.getElementById('am-err').style.display = 'none';
+  document.getElementById('admin-meeting-edit-modal').style.display = 'flex';
+}
+
+function closeAdminMeetingEdit() {
+  document.getElementById('admin-meeting-edit-modal').style.display = 'none';
+  _editingAdminMeetingId = null;
+}
+
+async function saveAdminMeeting() {
+  const errEl = document.getElementById('am-err');
+  const btn = document.getElementById('am-save-btn');
+  errEl.style.display = 'none';
+  const date = document.getElementById('am-date').value;
+  if (!date) { errEl.textContent = 'Date is required.'; errEl.style.display = 'block'; return; }
+
+  const body = { club_id: _meetingsClubId, date };
+  ['meeting_type','time','end_time','location_name','address','city','state','country','notes'].forEach(f => {
+    body[f] = document.getElementById('am-' + f).value || '';
+  });
+  if (_editingAdminMeetingId) body.id = _editingAdminMeetingId;
+
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const method = _editingAdminMeetingId ? 'PUT' : 'POST';
+    const res = await fetch('/api/admin/meetings', {
+      method, credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) { errEl.textContent = data.error || 'Error saving.'; errEl.style.display = 'block'; return; }
+    closeAdminMeetingEdit();
+    await loadAdminMeetings();
+  } catch (e) {
+    errEl.textContent = 'Unexpected error — please try again.'; errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save Meeting';
+  }
+}
+
+async function deleteAdminMeeting(id) {
+  if (!confirm('Delete this meeting?')) return;
+  const res = await fetch(`/api/admin/meetings?id=${id}`, { method: 'DELETE', credentials: 'include' });
+  if (res.ok) await loadAdminMeetings();
+  else alert('Failed to delete meeting.');
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js").catch(() => {});
+}
+
+init();
+</script>
+</body>
+</html>
