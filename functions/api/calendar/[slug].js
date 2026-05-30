@@ -24,7 +24,7 @@ function addTwoHours(dateStr, timeStr) {
 }
 
 function escICS(str) {
-  return String(str || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n');
+  return String(str || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n/g, '\\n').replace(/\r/g, '\\n').replace(/\n/g, '\\n');
 }
 
 // Fold long lines per RFC 5545 (max 75 octets)

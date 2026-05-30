@@ -1,5 +1,5 @@
 // functions/api/auth/login.js
-import { verifyPassword, generateToken, json, cors } from '../../_lib/auth.js';
+import { verifyPassword, hashPassword, isLegacyHash, generateToken, json, cors } from '../../_lib/auth.js';
 import { verifyTurnstile } from '../../_lib/turnstile.js';
 
 export async function onRequestPost({ request, env }) {
@@ -19,6 +19,13 @@ export async function onRequestPost({ request, env }) {
 
   if (!user || !(await verifyPassword(password, user.password_hash))) {
     return json({ error: 'Invalid email or password' }, 401);
+  }
+
+  // Silently upgrade legacy static-salt hashes to per-user random-salt v2
+  if (isLegacyHash(user.password_hash)) {
+    const newHash = await hashPassword(password);
+    await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?')
+      .bind(newHash, user.id).run();
   }
 
   const token = generateToken();

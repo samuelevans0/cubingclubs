@@ -74,6 +74,24 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   if (!body.name) return json({ error: "Club name is required" }, 400);
 
+  // Field length caps — prevent oversized payloads from bloating D1
+  const LIMITS = {
+    name: 120, slug: 60, meeting_place_name: 200,
+    address: 200, address_line2: 200, city: 100, state: 100,
+    country: 100, postal_code: 20, school_type: 50,
+    website: 500, description: 5000, logo_url: 500, photo_url: 500,
+    contact: 200, youtube: 500, instagram: 500, tiktok: 500,
+    facebook: 500, community_group: 500, phone: 30,
+    def_time: 10, def_end_time: 10, def_location_name: 200,
+    def_address: 200, def_address_line2: 200,
+    def_city: 100, def_state: 100, def_country: 100,
+  };
+  for (const [field, max] of Object.entries(LIMITS)) {
+    if (typeof body[field] === 'string' && body[field].length > max) {
+      return json({ error: `${field} exceeds maximum length of ${max} characters` }, 400);
+    }
+  }
+
   const socialErr = validateSocials(body);
   if (socialErr) return json({ error: socialErr }, 400);
 

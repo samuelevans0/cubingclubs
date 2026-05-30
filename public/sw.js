@@ -1,5 +1,5 @@
 const CACHE = 'cubingclubs-v1';
-const PRECACHE = ['/', '/dashboard', '/signup'];
+const PRECACHE = ['/'];
 
 self.addEventListener('install', e => {
   e.waitUntil(

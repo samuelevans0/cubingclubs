@@ -225,6 +225,7 @@
   </nav>
 </header>
 
+<main>
 <div class="hero">
   <div class="hero-inner">
     <h1>Find a Cubing Club Near You</h1>
@@ -267,6 +268,7 @@
     </div>
   </aside>
 </div>
+</main>
 
 <footer>
   <span>&copy; 2026 CubingClubs.net &mdash; <a href="/privacy-policy">Privacy Policy</a></span>
@@ -335,7 +337,7 @@ function locationStr(club) {
 
 function logoEl(club, size = 42) {
   if (club.logo_url) {
-    return `<img class="club-logo" src="${esc(club.logo_url)}" alt="${esc(club.name)} logo" width="${size}" height="${size}" onerror="this.style.display='none'" />`;
+    return `<img class="club-logo" src="${esc(club.logo_url)}" alt="${esc(club.name)} logo" width="${size}" height="${size}" loading="lazy" onerror="this.style.display='none'" />`;
   }
   const initial = (club.name || "?")[0].toUpperCase();
   return `<div class="club-logo-placeholder" style="width:${size}px;height:${size}px;">${esc(initial)}</div>`;

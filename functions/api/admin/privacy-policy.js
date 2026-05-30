@@ -30,10 +30,6 @@ export async function onRequestPost({ request, env }) {
   if (typeof content !== "string") return json({ error: "content is required" }, 400);
 
   await env.DB.prepare(
-    "CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL DEFAULT '')"
-  ).run();
-
-  await env.DB.prepare(
     "INSERT OR REPLACE INTO site_settings (key, value) VALUES ('privacy_policy', ?)"
   ).bind(content).run();
 

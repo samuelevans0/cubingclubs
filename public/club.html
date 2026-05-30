@@ -178,8 +178,10 @@
   <a class="back-link" href="/">← All Clubs</a>
 </header>
 
+<main>
 <div id="loading">Loading club…</div>
 <div class="page" id="page" style="display:none;"></div>
+</main>
 
 <footer>
   <span style="font-size:12px;color:var(--text-3);">&copy; 2026 <a href="/">CubingClubs.net</a> &mdash; <a href="/privacy-policy" style="color:var(--brand);text-decoration:none;">Privacy Policy</a></span>
@@ -204,7 +206,7 @@
 <!-- Report modal -->
 <div id="report-modal-club" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1001;align-items:center;justify-content:center;padding:1rem;" onclick="if(event.target===this)this.style.display='none'">
   <div style="background:var(--surface);border-radius:12px;max-width:420px;width:100%;padding:1.75rem;box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;">
-    <button onclick="document.getElementById('report-modal-club').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;line-height:1;">✕</button>
+    <button aria-label="Close" onclick="document.getElementById('report-modal-club').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:20px;color:var(--text-3);cursor:pointer;line-height:1;">✕</button>
     <div style="font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;margin-bottom:0.75rem;">Notice an issue?</div>
     <p style="font-size:14px;color:var(--text-2);line-height:1.6;">Report it to us at <a href="mailto:cubingclubs@gmail.com" style="color:var(--brand);font-weight:600;">cubingclubs@gmail.com</a></p>
   </div>
@@ -212,7 +214,7 @@
 
 <!-- Photo lightbox -->
 <div class="photo-lightbox" id="club-lightbox" style="display:none;" onclick="if(event.target===this)closeLightbox()">
-  <button class="photo-lightbox-close" onclick="closeLightbox()">✕</button>
+  <button class="photo-lightbox-close" aria-label="Close photo" onclick="closeLightbox()">✕</button>
   <img id="club-lightbox-img" src="" alt="Club photo" />
 </div>
 
@@ -409,13 +411,13 @@ function meetingCard(m, clubName) {
           </button>
           <div class="cal-dropdown" id="cal-dd-${esc(id)}">
             <a class="cal-dropdown-item" href="${esc(_gCalUrl(m, clubName))}" target="_blank" rel="noopener">
-              <img src="https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png" alt=""> Google Calendar
+              <img src="https://calendar.google.com/googlecalendar/images/favicon_v2018_256.png" alt="Google Calendar"> Google Calendar
             </a>
             <a class="cal-dropdown-item" href="${esc(_outlookUrl(m, clubName))}" target="_blank" rel="noopener">
-              <img src="https://res.cdn.office.net/assets/mail/pwa/v1/icons/icon-192.png" alt=""> Outlook
+              <img src="https://res.cdn.office.net/assets/mail/pwa/v1/icons/icon-192.png" alt="Outlook"> Outlook
             </a>
             <a class="cal-dropdown-item" href="${esc(_yahooUrl(m, clubName))}" target="_blank" rel="noopener">
-              <img src="https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png" alt=""> Yahoo Calendar
+              <img src="https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo-1200x1200.png" alt="Yahoo Calendar"> Yahoo Calendar
             </a>
             <div class="cal-dropdown-divider"></div>
             <button class="cal-dropdown-item" onclick="downloadICS(${JSON.stringify(id)})">

@@ -7,6 +7,21 @@ export function onRequestOptions() {
   return cors();
 }
 
+const MEETING_LIMITS = {
+  meeting_type: 80, time: 10, end_time: 10,
+  location_name: 200, address: 200, address_line2: 200,
+  city: 100, state: 100, country: 100, notes: 1000,
+};
+
+function validateMeetingLengths(body) {
+  for (const [field, max] of Object.entries(MEETING_LIMITS)) {
+    if (typeof body[field] === 'string' && body[field].length > max) {
+      return `${field} exceeds maximum length of ${max} characters`;
+    }
+  }
+  return null;
+}
+
 export async function onRequestGet({ request, env }) {
   const session = await getSession(request, env.DB);
   if (!session || !session.is_admin) return json({ error: "Unauthorized" }, 403);
@@ -33,6 +48,9 @@ export async function onRequestPost({ request, env }) {
   if (!body.date || !/^\d{4}-\d{2}-\d{2}$/.test(body.date))
     return json({ error: "Valid date (YYYY-MM-DD) is required" }, 400);
 
+  const lenErr = validateMeetingLengths(body);
+  if (lenErr) return json({ error: lenErr }, 400);
+
   const result = await env.DB.prepare(
     `INSERT INTO meetings (club_id, meeting_type, date, time, end_time, location_name, address, address_line2, city, state, country, notes)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
@@ -58,6 +76,9 @@ export async function onRequestPut({ request, env }) {
   if (!body.id) return json({ error: "id is required" }, 400);
   if (body.date && !/^\d{4}-\d{2}-\d{2}$/.test(body.date))
     return json({ error: "Valid date (YYYY-MM-DD) is required" }, 400);
+
+  const lenErr = validateMeetingLengths(body);
+  if (lenErr) return json({ error: lenErr }, 400);
 
   const exists = await env.DB.prepare("SELECT id FROM meetings WHERE id = ?").bind(body.id).first();
   if (!exists) return json({ error: "Meeting not found" }, 404);

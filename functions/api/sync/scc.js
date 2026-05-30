@@ -4,9 +4,8 @@
 
 import { json } from "../../_lib/auth.js";
 
-const SCC_CLUB_ID = 1;
-
 export async function onRequestPost({ request, env }) {
+  const SCC_CLUB_ID = env.SCC_CLUB_ID ? Number(env.SCC_CLUB_ID) : 1;
   // Verify shared secret
   const secret = request.headers.get('X-Sync-Secret');
   if (!secret || secret !== env.SCC_SYNC_SECRET) {

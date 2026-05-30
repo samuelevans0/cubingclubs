@@ -38,6 +38,12 @@ export async function verifyPassword(password, storedHash) {
   return btoa(String.fromCharCode(...new Uint8Array(bits))) === hashB64;
 }
 
+// Returns true when the stored hash was created with the old static salt.
+// Callers should re-hash and persist after a successful login.
+export function isLegacyHash(storedHash) {
+  return !!storedHash && !storedHash.startsWith('v2:');
+}
+
 export function generateToken() {
   const arr = new Uint8Array(32);
   crypto.getRandomValues(arr);
