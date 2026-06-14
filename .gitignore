@@ -7,6 +7,9 @@
 # Wrangler local state (contains local SQLite DB)
 .wrangler/
 
+# Editor / agent config
+.claude/
+
 # Node
 node_modules/
 
