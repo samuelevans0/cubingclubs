@@ -10,6 +10,10 @@ export async function onRequestPost({ request, env, waitUntil }) {
 
   const { email, password, turnstile_token } = body;
   if (!email || !password) return json({ error: 'Email and password required' }, 400);
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (typeof email !== 'string' || email.length > 254 || !EMAIL_RE.test(email.trim())) {
+    return json({ error: 'Please enter a valid email address' }, 400);
+  }
   if (password.length < 8) return json({ error: 'Password must be at least 8 characters' }, 400);
 
   const ok = await verifyTurnstile(turnstile_token, env);
@@ -54,7 +58,7 @@ export async function onRequestPost({ request, env, waitUntil }) {
     headers: {
       'Content-Type': 'application/json',
       'Set-Cookie': `session=${sessionToken}; HttpOnly; Secure; SameSite=Lax; Path=/; Expires=${expires.toUTCString()}`,
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': 'https://cubingclubs.net'
     }
   });
 }

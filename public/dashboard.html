@@ -261,7 +261,8 @@
       <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
     </div>
     <div class="login-error" id="login-error"></div>
-    <button class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;" onclick="doLogin()">Log In</button>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADkqbfSQTQ0zY-QO" data-theme="light" style="margin-bottom:1rem;" data-callback="onLoginTurnstileReady" data-expired-callback="onLoginTurnstileExpired"></div>
+    <button class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;" onclick="doLogin()" disabled>Log In</button>
     <div class="auth-switch" style="margin-top:0.75rem;"><a href="/forgot-password" style="color:var(--text-3);font-size:13px;">Forgot password?</a></div>
     <div class="auth-switch">Don't have an account? <a href="/signup">Sign up</a></div>
   </div>
@@ -893,7 +894,7 @@ function addrHide(prefix) {
 }
 
 function setVal(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
-function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/`/g,'&#96;'); }
 // ───────────────────────────────────────────────────────────────────────────
 
 async function init() {
@@ -1257,6 +1258,15 @@ function toggleSchoolType() {
   const checked = document.getElementById("f-school_club").checked;
   document.getElementById("school-type-row").style.display = checked ? "" : "none";
   if (!checked) document.getElementById("f-school_type").value = "";
+}
+
+function onLoginTurnstileReady() {
+  const btn = document.getElementById("login-btn");
+  if (btn) btn.disabled = false;
+}
+function onLoginTurnstileExpired() {
+  const btn = document.getElementById("login-btn");
+  if (btn) btn.disabled = true;
 }
 
 async function doLogin() {

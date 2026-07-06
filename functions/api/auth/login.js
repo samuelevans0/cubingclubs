@@ -10,15 +10,18 @@ export async function onRequestPost({ request, env }) {
   const { email, password, turnstile_token } = body;
   if (!email || !password) return json({ error: 'Email and password required' }, 400);
 
-  const ok = await verifyTurnstile(turnstile_token, env);
-  if (!ok) return json({ error: 'Human verification failed. Please try again.' }, 400);
-
   const user = await env.DB.prepare(
     'SELECT id, email, password_hash, is_admin, email_verified FROM users WHERE email = ?'
   ).bind(email.toLowerCase().trim()).first();
 
   if (!user || !(await verifyPassword(password, user.password_hash))) {
     return json({ error: 'Invalid email or password' }, 401);
+  }
+
+  // Admins bypass Turnstile — strong password auth is sufficient for direct admin access
+  if (!user.is_admin) {
+    const ok = await verifyTurnstile(turnstile_token, env);
+    if (!ok) return json({ error: 'Human verification failed. Please try again.' }, 400);
   }
 
   // Silently upgrade legacy static-salt hashes to per-user random-salt v2
@@ -48,7 +51,7 @@ export async function onRequestPost({ request, env }) {
     headers: {
       'Content-Type': 'application/json',
       'Set-Cookie': `session=${token}; HttpOnly; Secure; SameSite=Lax; Path=/; Expires=${expires.toUTCString()}`,
-      'Access-Control-Allow-Origin': '*'
+      'Access-Control-Allow-Origin': 'https://cubingclubs.net'
     }
   });
 }

@@ -13,6 +13,6 @@ export async function verifyTurnstile(token, env) {
     const data = await res.json();
     return data.success === true;
   } catch {
-    return false;
+    return false; // Fail closed — if verification can't be confirmed, don't treat the request as human
   }
 }

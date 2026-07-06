@@ -11,6 +11,7 @@
 <link rel="icon" href="/logo.png" type="image/png" />
 <link rel="apple-touch-icon" href="/logo.png" />
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -66,6 +67,7 @@
   .login-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 1rem; }
   .login-error { font-size: 13px; color: var(--danger); margin-bottom: 0.75rem; display: none; }
   .login-error.visible { display: block; }
+  .cf-turnstile { margin-bottom: 1rem; }
   label { font-size: 13px; font-weight: 500; color: var(--text-2); }
   input, textarea, select {
     font-family: 'DM Sans', sans-serif; font-size: 14px;
@@ -266,6 +268,7 @@
       <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password" />
     </div>
     <div class="login-error" id="login-error"></div>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADkqbfSQTQ0zY-QO" data-theme="light"></div>
     <button class="btn btn-primary" id="login-btn" style="width:100%;justify-content:center;" onclick="doLogin()">Log In</button>
   </div>
 </main>
@@ -356,7 +359,7 @@
     <div class="tab-content" id="tab-settings">
       <div class="card">
         <div class="card-title">Privacy Policy</div>
-        <p style="font-size:13px;color:var(--text-2);margin-bottom:1rem;">Edit the content shown at <a href="/privacy-policy" target="_blank" style="color:var(--brand);">/privacy-policy</a>. HTML is supported.</p>
+        <p style="font-size:13px;color:var(--text-2);margin-bottom:1rem;">Edit the content shown at <a href="/privacy-policy" target="_blank" style="color:var(--brand);" rel="noopener noreferrer">/privacy-policy</a>. HTML is supported.</p>
         <div class="field">
           <label for="pp-content">Policy Content</label>
           <textarea id="pp-content" rows="20" style="font-family:monospace;font-size:13px;min-height:300px;"></textarea>
@@ -652,7 +655,7 @@ async function addrFetch(query, prefix) {
     addrShow(data.features || [], prefix);
   } catch { addrHide(prefix); }
 }
-function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/`/g,'&#96;'); }
 function addrShow(features, prefix) {
   _addrFeatures[prefix] = features; _addrFocused[prefix] = -1;
   const box = document.getElementById(prefix + '-addr-suggestions');
@@ -1058,16 +1061,21 @@ async function doLogin() {
   const err = document.getElementById("login-error");
   const email = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value;
+  const tsToken = document.querySelector('[name="cf-turnstile-response"]')?.value || '';
   err.classList.remove("visible");
   btn.disabled = true; btn.textContent = "Logging in...";
   const res = await fetch("/api/auth/login", {
     method: "POST", credentials: "include",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
+    body: JSON.stringify({ email, password, turnstile_token: tsToken })
   });
   const data = await res.json();
   btn.disabled = false; btn.textContent = "Log In";
-  if (!res.ok) { err.textContent = data.error; err.classList.add("visible"); return; }
+  if (!res.ok) {
+    err.textContent = data.error; err.classList.add("visible");
+    if (typeof turnstile !== 'undefined') turnstile.reset();
+    return;
+  }
   if (!data.user.is_admin) { window.location.href = "/dashboard"; return; }
   document.getElementById("login-screen").style.display = "none";
   showPanel(data.user);
@@ -1185,7 +1193,7 @@ function switchTab(name) {
 
 function esc(str) {
   if (!str) return "";
-  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/`/g,"&#96;");
 }
 
 function fmtDate(iso) {

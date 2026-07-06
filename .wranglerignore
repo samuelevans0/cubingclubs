@@ -1,0 +1,22 @@
+# Secrets
+.env
+.dev.vars
+
+# Wrangler local state
+.wrangler/
+
+# Dependencies
+node_modules/
+
+# Version control
+.git/
+.gitignore
+
+# Editor / OS artifacts
+.DS_Store
+Thumbs.db
+.claude/
+
+# Project docs / tooling (not needed in deployment)
+*.md
+schema.sql

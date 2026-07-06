@@ -114,7 +114,8 @@
       <input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password" />
     </div>
 
-    <button class="btn-primary" id="submit-btn" onclick="doSignup()">Create Account</button>
+    <div class="cf-turnstile" data-sitekey="0x4AAAAAADkqbfSQTQ0zY-QO" data-theme="light" data-callback="onSignupTurnstileReady" data-expired-callback="onSignupTurnstileExpired"></div>
+    <button class="btn-primary" id="submit-btn" onclick="doSignup()" disabled>Create Account</button>
     <div class="auth-switch">Already have an account? <a href="/dashboard">Log in</a></div>
   </div>
   <div class="success-card" id="success-card">
@@ -125,6 +126,15 @@
 </main>
 
 <script>
+function onSignupTurnstileReady() {
+  const btn = document.getElementById("submit-btn");
+  if (btn) btn.disabled = false;
+}
+function onSignupTurnstileExpired() {
+  const btn = document.getElementById("submit-btn");
+  if (btn) btn.disabled = true;
+}
+
 async function doSignup() {
   const btn = document.getElementById("submit-btn");
   const errEl = document.getElementById("error-msg");

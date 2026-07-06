@@ -344,7 +344,7 @@ function logoEl(club, size = 42) {
 }
 
 function esc(str) {
-  return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  return String(str || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;").replace(/`/g,"&#96;");
 }
 
 const SCHOOL_LABELS = { public:"Public School", k12:"K-12", elementary:"Elementary School", middle:"Middle School", high:"High School", college:"College / University" };
@@ -628,9 +628,15 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
+function fetchWithTimeout(url, timeout = 12000) {
+  const ctrl = new AbortController();
+  const id = setTimeout(() => ctrl.abort(), timeout);
+  return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(id));
+}
+
 Promise.all([
-  fetch('/api/clubs').then(r => r.json()),
-  fetch('/api/geo').then(r => r.json()).catch(() => ({ lat: null, lng: null }))
+  fetchWithTimeout('/api/clubs').then(r => r.json()),
+  fetchWithTimeout('/api/geo').then(r => r.json()).catch(() => ({ lat: null, lng: null }))
 ]).then(([clubsData, geo]) => {
   if (geo && geo.lat != null && geo.lng != null) {
     userLat = geo.lat;
@@ -638,7 +644,7 @@ Promise.all([
   }
   loadClubs(clubsData);
 }).catch(() => {
-  document.getElementById('club-list').innerHTML = '<div style="padding:2rem;text-align:center;color:#9CA3AF;font-size:13px;">Could not load clubs.</div>';
+  document.getElementById('club-list').innerHTML = '<div style="padding:2rem;text-align:center;color:#9CA3AF;font-size:13px;">Could not load clubs. Please refresh the page.</div>';
 });
 
 initNav();
