@@ -634,20 +634,34 @@ function fetchWithTimeout(url, timeout = 12000) {
   return fetch(url, { signal: ctrl.signal }).finally(() => clearTimeout(id));
 }
 
-Promise.all([
-  fetchWithTimeout('/api/clubs').then(r => r.json()),
-  fetchWithTimeout('/api/geo').then(r => r.json()).catch(() => ({ lat: null, lng: null }))
-]).then(([clubsData, geo]) => {
-  if (geo && geo.lat != null && geo.lng != null) {
-    userLat = geo.lat;
-    userLng = geo.lng;
-  }
-  loadClubs(clubsData);
-}).catch(() => {
-  document.getElementById('club-list').innerHTML = '<div style="padding:2rem;text-align:center;color:#9CA3AF;font-size:13px;">Could not load clubs. Please refresh the page.</div>';
-});
+let clubsLoaded = false;
+function loadData() {
+  return Promise.all([
+    fetchWithTimeout('/api/clubs').then(r => r.json()),
+    fetchWithTimeout('/api/geo').then(r => r.json()).catch(() => ({ lat: null, lng: null }))
+  ]).then(([clubsData, geo]) => {
+    if (geo && geo.lat != null && geo.lng != null) {
+      userLat = geo.lat;
+      userLng = geo.lng;
+    }
+    clubsLoaded = true;
+    loadClubs(clubsData);
+  }).catch(() => {
+    document.getElementById('club-list').innerHTML = '<div style="padding:2rem;text-align:center;color:#9CA3AF;font-size:13px;">Could not load clubs. Please refresh the page.</div>';
+  });
+}
 
+loadData();
 initNav();
+
+// Restoring from the back/forward cache resumes the page without re-running
+// scripts; if the initial fetches were in flight when we navigated away they
+// never settle, so retry them and refresh the login state in the nav.
+window.addEventListener('pageshow', e => {
+  if (!e.persisted) return;
+  if (!clubsLoaded) loadData();
+  initNav();
+});
 </script>
 </body>
 </html>

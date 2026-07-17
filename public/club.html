@@ -515,12 +515,22 @@ function closeLightbox() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
 const slug = window.location.pathname.replace(/^\//, '').split('/')[0];
-fetch(`/api/club-page?slug=${encodeURIComponent(slug)}`)
-  .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
-  .then(render)
-  .catch(() => {
-    document.getElementById('loading').innerHTML = '<h2 style="color:#9CA3AF">Club not found.</h2><p style="margin-top:8px"><a href="/" style="color:#1A56DB">← Browse all clubs</a></p>';
-  });
+let clubLoaded = false;
+function loadClub() {
+  fetch(`/api/club-page?slug=${encodeURIComponent(slug)}`)
+    .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+    .then(data => { clubLoaded = true; render(data); })
+    .catch(() => {
+      document.getElementById('loading').innerHTML = '<h2 style="color:#9CA3AF">Club not found.</h2><p style="margin-top:8px"><a href="/" style="color:#1A56DB">← Browse all clubs</a></p>';
+    });
+}
+loadClub();
+
+// Back/forward-cache restores skip script re-execution; retry if the initial
+// fetch was stranded mid-flight by the navigation away.
+window.addEventListener('pageshow', e => {
+  if (e.persisted && !clubLoaded) loadClub();
+});
 </script>
 </body>
 </html>
