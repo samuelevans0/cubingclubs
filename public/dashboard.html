@@ -897,8 +897,18 @@ function setVal(id, val) { const el = document.getElementById(id); if (el) el.va
 function esc2(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/`/g,'&#96;'); }
 // ───────────────────────────────────────────────────────────────────────────
 
+let authResolved = false;
 async function init() {
-  const res = await fetch("/api/auth/me", { credentials: "include" });
+  let res;
+  try {
+    res = await fetch("/api/auth/me", { credentials: "include" });
+  } catch (e) {
+    // An auth check stranded by a bfcache freeze rejects late; never paint
+    // over a state the pageshow retry has already rendered.
+    if (!authResolved) showLogin();
+    return;
+  }
+  authResolved = true;
   if (!res.ok) { showLogin(); return; }
   const { user, club } = await res.json();
   if (user.is_admin) { window.location.href = "/admin"; return; }
@@ -906,6 +916,7 @@ async function init() {
 }
 
 function showLogin() {
+  document.getElementById("dashboard").style.display = "none";
   document.getElementById("login-screen").style.display = "block";
   document.getElementById("main-nav").innerHTML = `
     <a href="/">Clubs</a>
@@ -920,6 +931,7 @@ let _currentClub = null;
 function showDashboard(user, club) {
   _currentUser = user;
   _currentClub = club || null;
+  document.getElementById("login-screen").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
   initOwnerNotifyBtn();
   document.getElementById("main-nav").innerHTML = `
@@ -1701,6 +1713,12 @@ if ('serviceWorker' in navigator) {
 }
 
 init();
+
+// A bfcache restore resumes the page without re-running scripts; retry the
+// auth check if it was stranded mid-flight by navigating away.
+window.addEventListener('pageshow', e => {
+  if (e.persisted && !authResolved) init();
+});
 </script>
 </body>
 </html>

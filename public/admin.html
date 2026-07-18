@@ -709,8 +709,18 @@ let editingClubId = null;
 const MODAL_FIELDS = ["name","address","address_line2","city","state","postal_code","country","school_type","contact","website","logo_url","lat","lng","description","denial_message"];
 let denyingClubId = null;
 
+let authResolved = false;
 async function init() {
-  const res = await fetch("/api/auth/me", { credentials: "include" });
+  let res;
+  try {
+    res = await fetch("/api/auth/me", { credentials: "include" });
+  } catch (e) {
+    // An auth check stranded by a bfcache freeze rejects late; never paint
+    // over a state the pageshow retry has already rendered.
+    if (!authResolved) showLogin();
+    return;
+  }
+  authResolved = true;
   if (!res.ok) { showLogin(); return; }
   const { user } = await res.json();
   if (!user.is_admin) { window.location.href = "/dashboard"; return; }
@@ -719,6 +729,7 @@ async function init() {
 }
 
 function showLogin() {
+  document.getElementById("admin-panel").style.display = "none";
   document.getElementById("login-screen").style.display = "block";
   document.getElementById("main-nav").innerHTML = `
     <a href="/">Clubs</a>
@@ -728,6 +739,7 @@ function showLogin() {
 }
 
 function showPanel(user) {
+  document.getElementById("login-screen").style.display = "none";
   document.getElementById("admin-panel").style.display = "block";
   setAdminEmail(user.email);
   document.getElementById("main-nav").innerHTML = `
@@ -1454,6 +1466,12 @@ if ("serviceWorker" in navigator) {
 }
 
 init();
+
+// A bfcache restore resumes the page without re-running scripts; retry the
+// auth check if it was stranded mid-flight by navigating away.
+window.addEventListener('pageshow', e => {
+  if (e.persisted && !authResolved) init();
+});
 </script>
 </body>
 </html>
