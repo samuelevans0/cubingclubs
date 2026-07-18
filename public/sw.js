@@ -1,13 +1,13 @@
-const CACHE = 'cubingclubs-v1';
-const PRECACHE = ['/'];
+// v2: stop caching the HTML shell. v1 precached '/' and ran its network-first
+// handler on navigations, so a back/forward navigation could be served the
+// cached (old) page — stranding users on a stale build that never runs the
+// latest code. Bumping the name purges the old cache, including that stale '/'.
+const CACHE = 'cubingclubs-v2';
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then(c => c.addAll(PRECACHE))
-      .catch(() => {})
-      .then(() => self.skipWaiting())
-  );
+self.addEventListener('install', () => {
+  // Nothing to precache — the page shell must always come fresh from the
+  // network. Take over as soon as possible.
+  self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {
@@ -19,18 +19,29 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if (e.request.url.includes('/api/')) return;
-  if (e.request.method !== 'GET') return;
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  if (req.url.includes('/api/')) return;
+
+  // HTML documents: stay out of the way entirely. Let the browser fetch every
+  // navigation straight from the network so a deploy takes effect immediately
+  // and no one can be pinned to an old page shell. (Root cause of the "clubs
+  // never load after clicking Log In and going Back" bug.)
+  if (req.mode === 'navigate') return;
+
+  // Static assets (JS, CSS, images, fonts): cache-first for speed, refreshed
+  // in the background when the network has a newer copy.
   e.respondWith(
-    fetch(e.request)
-      .then(res => {
+    caches.match(req).then(cached => {
+      const network = fetch(req).then(res => {
         if (res.ok) {
           const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
+          caches.open(CACHE).then(c => c.put(req, clone));
         }
         return res;
-      })
-      .catch(() => caches.match(e.request))
+      }).catch(() => cached);
+      return cached || network;
+    })
   );
 });
 
