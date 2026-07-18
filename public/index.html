@@ -577,12 +577,17 @@ document.getElementById('search-input').addEventListener('input', e => {
   renderList();
 });
 
+let navEpoch = 0;
 async function initNav() {
+  // Only the latest call may write the nav: an initNav stranded by bfcache can
+  // settle after the pageshow retry and would repaint a stale auth state.
+  const epoch = ++navEpoch;
   const nav = document.getElementById('main-nav');
   try {
     const res = await fetch('/api/auth/me', { credentials: 'include' });
     if (res.ok) {
       const { user } = await res.json();
+      if (epoch !== navEpoch) return;
       if (user.is_admin) {
         nav.innerHTML = `
           <a href="/" class="active">Clubs</a>
@@ -599,6 +604,7 @@ async function initNav() {
       return;
     }
   } catch (e) {}
+  if (epoch !== navEpoch) return;
   nav.innerHTML = `
     <a href="/" class="active">Clubs</a>
     <div class="nav-divider"></div>
@@ -647,6 +653,9 @@ function loadData() {
     clubsLoaded = true;
     loadClubs(clubsData);
   }).catch(() => {
+    // A load stranded by bfcache can reject long after a pageshow retry has
+    // already rendered; never let that stale failure wipe a populated list.
+    if (clubsLoaded) return;
     document.getElementById('club-list').innerHTML = '<div style="padding:2rem;text-align:center;color:#9CA3AF;font-size:13px;">Could not load clubs. Please refresh the page.</div>';
   });
 }

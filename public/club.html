@@ -521,6 +521,9 @@ function loadClub() {
     .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
     .then(data => { clubLoaded = true; render(data); })
     .catch(() => {
+      // Ignore late failures from a load stranded by bfcache once the page
+      // has already rendered via the pageshow retry.
+      if (clubLoaded) return;
       document.getElementById('loading').innerHTML = '<h2 style="color:#9CA3AF">Club not found.</h2><p style="margin-top:8px"><a href="/" style="color:#1A56DB">← Browse all clubs</a></p>';
     });
 }
