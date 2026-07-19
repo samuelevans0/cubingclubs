@@ -1,8 +1,22 @@
-// v2: stop caching the HTML shell. v1 precached '/' and ran its network-first
-// handler on navigations, so a back/forward navigation could be served the
-// cached (old) page — stranding users on a stale build that never runs the
-// latest code. Bumping the name purges the old cache, including that stale '/'.
-const CACHE = 'cubingclubs-v2';
+// v3: the service worker must ONLY ever touch our own same-origin static assets.
+//
+// The real, long-standing "clubs never load" bug: once the worker was
+// installed, it proxied EVERY subresource through its own fetch() — including
+// the cross-origin Leaflet map library from cdnjs. A service-worker fetch() is
+// governed by the page CSP's connect-src, which does not list cdnjs, so that
+// fetch was blocked (net::ERR_FAILED). Leaflet never loaded, `L` was undefined,
+// loadClubs() threw at L.marker(), and the list stayed stuck on skeletons —
+// but only from the SECOND visit on (the first visit has no controlling worker,
+// so the browser loads Leaflet directly). Hard reload / unregister "fixed" it
+// only by bypassing the worker.
+//
+// Cross-origin requests (Leaflet, Google Fonts, CF beacon) are now passed
+// straight through so the browser loads them directly under script-src /
+// style-src / font-src, which DO allow them.
+//
+// (v2 also stopped caching the HTML shell so navigations always come fresh from
+// the network; that's kept.)
+const CACHE = 'cubingclubs-v3';
 
 self.addEventListener('install', () => {
   // Nothing to precache — the page shell must always come fresh from the
@@ -21,16 +35,24 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const req = e.request;
   if (req.method !== 'GET') return;
-  if (req.url.includes('/api/')) return;
 
-  // HTML documents: stay out of the way entirely. Let the browser fetch every
-  // navigation straight from the network so a deploy takes effect immediately
-  // and no one can be pinned to an old page shell. (Root cause of the "clubs
-  // never load after clicking Log In and going Back" bug.)
+  // Cross-origin requests (Leaflet/cdnjs, Google Fonts, CF beacon): never proxy
+  // them. A worker fetch() is subject to the page CSP's connect-src, which does
+  // not allow those hosts, so proxying gets them blocked. Let the browser load
+  // them directly under script-src/style-src/font-src instead. This is THE fix
+  // for the stuck-skeletons bug.
+  let url;
+  try { url = new URL(req.url); } catch { return; }
+  if (url.origin !== self.location.origin) return;
+
+  if (url.pathname.startsWith('/api/')) return;
+
+  // HTML documents: stay out of the way entirely so every navigation comes
+  // fresh from the network and no one is pinned to an old page shell.
   if (req.mode === 'navigate') return;
 
-  // Static assets (JS, CSS, images, fonts): cache-first for speed, refreshed
-  // in the background when the network has a newer copy.
+  // Our own static assets (JS, CSS, images, fonts): cache-first for speed,
+  // refreshed in the background when the network has a newer copy.
   e.respondWith(
     caches.match(req).then(cached => {
       const network = fetch(req).then(res => {
